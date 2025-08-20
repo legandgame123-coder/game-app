@@ -1,24 +1,41 @@
+# Node modules
+node_modules/
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
+*.log
 
-node_modules
-dist
-dist-ssr
-*.local
+# Build output
+dist/
+build/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# OS generated files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Cache
+.cache/
+.temp/
+vite.cache/
+
+# Coverage
+coverage/
+
+# Optional: lock files (ignore if you don’t want them in repo)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

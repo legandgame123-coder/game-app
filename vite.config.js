@@ -8,4 +8,9 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  preview: {
+    host: true,
+    port: 4173,
+    allowedHosts: ['battelgame.com', 'www.battelgame.com'] // ✅ add your domain(s) here
+  }
 })

@@ -3,7 +3,7 @@ import GameHeader from './GameHeader';
 import BettingSection from './BettingSection';
 import HistorySection from './HistorySection';
 import { useSocket } from '../../context/SocketContext.jsx';
-import { placeBet, getGameHistory } from '../../services/colorAPI.js';
+import { placeBet, getGameHistory, getUserBets } from '../../services/colorAPI.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 
 const GameBoard = () => {
@@ -12,12 +12,14 @@ const GameBoard = () => {
   const [betAmount, setBetAmount] = useState(10);
   const [multiplier, setMultiplier] = useState(1);
   const [gameHistory, setGameHistory] = useState([]);
+  const [userBets, setUserBets] = useState([]);
   const [activeTab, setActiveTab] = useState('history');
   const user = JSON.parse(localStorage.getItem("user"))
   const userId = user._id
 
   useEffect(() => {
     fetchGameHistory();
+    fetchUserBets();
   }, [lastResult]);
 
   const fetchGameHistory = async () => {
@@ -25,6 +27,17 @@ const GameBoard = () => {
       const response = await getGameHistory();
       if (response.data.success) {
         setGameHistory(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching game history:', error);
+    }
+  };
+
+  const fetchUserBets = async () => {
+    try {
+      const response = await getUserBets(userId);
+      if (response.data.success) {
+        setUserBets(response.data.data);
       }
     } catch (error) {
       console.error('Error fetching game history:', error);
@@ -81,6 +94,7 @@ const GameBoard = () => {
         setActiveTab={setActiveTab}
         gameHistory={gameHistory}
         lastResult={lastResult}
+        userBets={userBets}
       />
     </div>
   );

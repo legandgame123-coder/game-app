@@ -1,14 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAviatorSocket } from "../../context/AviatorSocketContext";
 import MovingDotsCircle from "./MovingDotsCircle"
+import { getUserBets } from "../../services/aviatorApi";
+import HistorySection from "./HistorySection";
 
 export default function AviatorGameScreen() {
-  const { socket, isConnected, multiplier, crashPoint, isRunning, liveBets, topBets } =
+  const { socket, isConnected, multiplier, crashPoint, isRunning, liveBets, topBets, hasBet, setHasBet } =
     useAviatorSocket();
-
+  const user = JSON.parse(localStorage.getItem("user"))
+  const userId = user._id
   const [bet, setBet] = useState(10);
-  const [hasBet, setHasBet] = useState(false);
   const [hasCashedOut, setHasCashedOut] = useState(false);
+  const [activeTab, setActiveTab] = useState('bets');
+  const [userBets, setUserBets] = useState([]);
+
+  useEffect(() => {
+    fetchUserBets();
+  }, [multiplier]);
+
+  const fetchUserBets = async () => {
+      try {
+        const response = await getUserBets(userId);
+        if (response.data.success) {
+          setUserBets(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching game history:', error);
+      }
+    };
 
   const canvasRef = useRef(null);
 
@@ -57,7 +76,7 @@ export default function AviatorGameScreen() {
       const maxX =
         PAD +
         (VIEW_W - PAD * 2) *
-          Math.min(multiplier / 5, 1); // scale with multiplier, cap at screen end
+        Math.min(multiplier / 5, 1); // scale with multiplier, cap at screen end
       for (let x = PAD; x <= maxX; x += 2) {
         points.push({ x, y: getCurveY(x) });
       }
@@ -99,27 +118,74 @@ export default function AviatorGameScreen() {
     draw();
   }, [multiplier, isRunning]);
 
-  const handlePlaceBet = () => {
-    if (!socket || !isConnected || hasBet) return;
-    socket.emit("placeBet", { amount: bet });
-    setHasBet(true);
-    setHasCashedOut(false);
+  const handlePlaceBet = async () => {
+    if (!isConnected || hasBet) return;
+
+    try {
+      console.log(userId, bet)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/aviator/bet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId, // ensure `user` is available in context
+          amount: bet,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data)
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to place bet');
+      }
+
+      setHasBet(true);
+      setHasCashedOut(false);
+      // Optionally show a toast or UI feedback
+    } catch (error) {
+      console.error('Error placing bet:', error.message);
+      // Optionally show error to the user
+    }
   };
 
-  const handleCashOut = () => {
-    if (!socket || !isConnected || !hasBet || hasCashedOut) return;
-    socket.emit("cashOut");
-    setHasCashedOut(true);
+
+  const handleCashOut = async () => {
+    if (!isConnected || !hasBet || hasCashedOut) return;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/aviator/cashout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId, // make sure `user` is available
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Cash out failed');
+      }
+
+      setHasCashedOut(true);
+      // Optionally: show success message or winnings
+      // e.g., show `data.winnings` or `data.multiplier`
+
+    } catch (error) {
+      console.error('Error during cash out:', error.message);
+      // Optionally show an error notification to the user
+    }
   };
+
 
   const getPotentialWin = () => (bet * multiplier).toFixed(2);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-      <p className="mb-4">
-        {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-      </p>
-
+    <div className="flex flex-col items-center justify-center min-h-screen h-auto bg-gray-900 text-white">
       {/* GAME AREA */}
       <div className="relative w-full max-w-5xl h-72 bg-gray-800 rounded-lg overflow-hidden">
         {/* <div className="absolute left-[-80px]"><MovingDotsCircle /> </div>
@@ -171,7 +237,7 @@ export default function AviatorGameScreen() {
         {!hasBet ? (
           <button
             onClick={handlePlaceBet}
-            disabled={!isConnected || isRunning || hasBet}
+            // disabled={!isConnected || isRunning || hasBet}
             className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
           >
             Place Bet
@@ -194,50 +260,12 @@ export default function AviatorGameScreen() {
         )}
       </div>
 
-      {/* Live Bets & Top Bets Table */}
-      <div className="mt-8 w-full max-w-5xl overflow-hidden bg-gray-700 rounded-lg p-4">
-        <h3 className="text-xl font-semibold text-white mb-4">Live Bets</h3>
-        <table className="w-full table-auto text-sm text-gray-300">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">User</th>
-              <th className="px-4 py-2">Bet Amount</th>
-              <th className="px-4 py-2">Cashed Out</th>
-            </tr>
-          </thead>
-          <tbody>
-            {liveBets.map((bet, index) => (
-              <tr key={index}>
-                <td className="px-4 py-2">{bet.userId}</td>
-                <td className="px-4 py-2">${bet.amount}</td>
-                <td className="px-4 py-2">
-                  {bet.cashedOut ? "Yes" : "No"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-8 w-full max-w-5xl overflow-hidden bg-gray-700 rounded-lg p-4">
-        <h3 className="text-xl font-semibold text-white mb-4">Top Bets</h3>
-        <table className="w-full table-auto text-sm text-gray-300">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">User</th>
-              <th className="px-4 py-2">Bet Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {topBets.map((bet, index) => (
-              <tr key={index}>
-                <td className="px-4 py-2">{bet.userId}</td>
-                <td className="px-4 py-2">${bet.amount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <HistorySection
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        liveBets={liveBets}
+        userBets={userBets}
+      />
     </div>
   );
 }

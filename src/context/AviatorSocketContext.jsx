@@ -19,6 +19,7 @@ export const AviatorSocketProvider = ({ children }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [liveBets, setLiveBets] = useState([]);
   const [topBets, setTopBets] = useState([]);
+  const [hasBet, setHasBet] = useState(false);
 
   useEffect(() => {
     const newSocket = io(`${import.meta.env.VITE_API_URL}`); // namespace
@@ -31,6 +32,7 @@ export const AviatorSocketProvider = ({ children }) => {
       setCrashPoint(crashPoint);
       setMultiplier(1.0);
       setIsRunning(true);
+      setHasBet(false)
     });
 
     newSocket.on('multiplierUpdate', ({ multiplier }) => {
@@ -47,16 +49,16 @@ export const AviatorSocketProvider = ({ children }) => {
     });
 
     // Handle top bets updates
-    newSocket.on('topBetsUpdate', (topBets) => {
-      setTopBets(topBets);
-    });
+    // newSocket.on('topBetsUpdate', (topBets) => {
+    //   setTopBets(topBets);
+    // });
 
     return () => newSocket.disconnect();
   }, []);
 
   return (
     <AviatorSocketContext.Provider
-      value={{ socket, isConnected, multiplier, crashPoint, isRunning, liveBets, topBets,  }}
+      value={{ socket, isConnected, multiplier, crashPoint, isRunning, liveBets, topBets, hasBet, setHasBet }}
     >
       {children}
     </AviatorSocketContext.Provider>

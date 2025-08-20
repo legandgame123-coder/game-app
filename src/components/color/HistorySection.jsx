@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import TransactionHistory from './TransactionHistory';
 
-const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult }) => {
+const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, userBets }) => {
   const tabs = [
     { id: 'history', label: 'Game History' },
     { id: 'chart', label: 'Chart' },
@@ -31,11 +32,10 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult }) =>
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+            className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${activeTab === tab.id
+              ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+              : 'text-gray-600 hover:text-gray-900'
+              }`}
           >
             {tab.label}
           </button>
@@ -51,17 +51,16 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult }) =>
               <div className="text-center">Number</div>
               <div className="text-center">Result</div>
             </div>
-            
+
             {lastResult && (
               <div className="grid grid-cols-3 gap-4 py-2 bg-yellow-50 rounded-lg animate-pulse">
                 <div className="text-sm font-medium">
                   {formatPeriod(lastResult.period)}
                 </div>
                 <div className="text-center">
-                  <span className={`inline-block w-8 h-8 rounded-full text-white font-bold text-sm leading-8 ${
-                    [1, 3, 7, 9].includes(lastResult.winningNumber) ? 'bg-green-500' :
+                  <span className={`inline-block w-8 h-8 rounded-full text-white font-bold text-sm leading-8 ${[1, 3, 7, 9].includes(lastResult.winningNumber) ? 'bg-green-500' :
                     [2, 4, 6, 8].includes(lastResult.winningNumber) ? 'bg-red-500' : 'bg-purple-500'
-                  }`}>
+                    }`}>
                     {lastResult.winningNumber}
                   </span>
                 </div>
@@ -79,10 +78,9 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult }) =>
                   {formatPeriod(round.period)}
                 </div>
                 <div className="text-center">
-                  <span className={`inline-block w-8 h-8 rounded-full text-white font-bold text-sm leading-8 ${
-                    [1, 3, 7, 9].includes(round.winningNumber) ? 'bg-green-500' :
+                  <span className={`inline-block w-8 h-8 rounded-full text-white font-bold text-sm leading-8 ${[1, 3, 7, 9].includes(round.winningNumber) ? 'bg-green-500' :
                     [2, 4, 6, 8].includes(round.winningNumber) ? 'bg-red-500' : 'bg-purple-500'
-                  }`}>
+                    }`}>
                     {round.winningNumber}
                   </span>
                 </div>
@@ -111,10 +109,15 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult }) =>
         )}
 
         {activeTab === 'my' && (
-          <div className="text-center text-gray-500 py-8">
-            <div className="text-4xl mb-2">👤</div>
-            <div>My betting history</div>
-            <div className="text-sm mt-2">Login to view your bets</div>
+          <div>
+            <TransactionHistory userBets={userBets} />
+            {
+              userBets.length === 0 && <div className="text-center text-gray-500 py-8">
+                <div className="text-4xl mb-2">👤</div>
+                <div>My betting history</div>
+                <div className="text-sm mt-2">Login to view your bets</div>
+              </div>
+            }
           </div>
         )}
       </div>

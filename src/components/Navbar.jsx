@@ -60,7 +60,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <Menu as="div" className="relative ml-3">
               <div>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm">
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm z-100">
                   <img
                     alt=""
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -78,8 +78,12 @@ const Navbar = () => {
                 leaveTo="translate-x-full opacity-0"
               >
                 <MenuItems
-                  className="fixed top-0 right-0 z-50 min-h-screen w-64 md:w-64 sm:w-full transform bg-[#1a2c38] focus:outline-none mt-16"
+                  className="fixed top-0 left-0 z-50 min-h-screen w-64 md:w-64 sm:w-full transform bg-[#1a2c38] focus:outline-none pt-4"
                 >
+                  <span className="block px-4 py-2 text-sm hover:bg-[#0f212e]">
+                    <p className='text-amber-200'>{user.fullName}</p>
+                    <p>{user._id}</p>
+                  </span>
                   {user?.role === 'admin' && (
                     <MenuItem>
                       <a
