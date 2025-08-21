@@ -21,6 +21,7 @@ import DepositFlow from './components/DepositFlow';
 import Color from './pages/Color';
 import { AviatorSocketProvider } from './context/AviatorSocketContext';
 import Spinner from "./components/Spinner"
+import ChangePassword from './components/ChangePassword';
 
 const App = () => {
 
@@ -60,6 +61,7 @@ const App = () => {
                 <Route path="/aviator" element={<AviatorGameScreen />} />
                 <Route path="/mines" element={<Mines />} />
                 <Route path="/spinner" element={<Spinner />} />
+                <Route path="/change-password" element={<ChangePassword />} />
                 <Route path="/color-trading" element={<Color />} />
 
             //private routes

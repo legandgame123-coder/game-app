@@ -7,6 +7,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
     { id: 'my', label: 'My History' },
     { id: 'top', label: 'Top' }
   ];
+
   const [sortedBets, setSortedBets] = useState([])
   // console.log(liveBets)
 
@@ -15,7 +16,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
   }, [liveBets])
 
   return (
-    <div className="bg-white border-t w-full text-black">
+    <div className="bg-gray-800 border-t w-full text-white">
       {/* Tab Navigation */}
       <div className="flex border-b">
         {tabs.map((tab) => (
@@ -24,7 +25,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${activeTab === tab.id
               ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-              : 'text-gray-600 hover:text-gray-900'
+              : 'text-gray-600 hover:text-white'
               }`}
           >
             {tab.label}
@@ -43,7 +44,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
             </div>
 
             {liveBets.map((bet, index) => (
-              <div key={index} className="grid grid-cols-3 gap-4 py-2 hover:bg-gray-50 rounded">
+              <div key={index} className="grid grid-cols-3 space-x-2 text-center gap-4 py-2 hover:bg-gray-50 rounded">
                 <div className="text-sm font-medium">
                   {bet.userId}
                 </div>
@@ -59,7 +60,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
             ))}
 
             {liveBets.length === 0 && (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-white py-8">
                 <div className="text-4xl mb-2">🎮</div>
                 <div>No Bets available</div>
               </div>
@@ -69,14 +70,14 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
 
         {activeTab === 'top' && (
           <div className="space-y-2">
-            <div className="grid grid-cols-3 gap-4 text-xs font-medium text-gray-500 pb-2 border-b">
+            <div className="grid grid-cols-3 gap-4 text-xs font-medium text-white pb-2 border-b">
               <div>User</div>
               <div className="text-center">Bet Amount</div>
               <div className="text-center">Cashed Out</div>
             </div>
 
             {sortedBets.map((bet, index) => (
-              <div key={index} className="grid grid-cols-3 gap-4 py-2 hover:bg-gray-50 rounded">
+              <div key={index} className="grid grid-cols-3 space-x-2 text-center gap-4 py-2 hover:bg-gray-50 rounded">
                 <div className="text-sm font-medium">
                   {bet.userId}
                   {console.log(bet, "adfdsfsakmk")}
@@ -93,7 +94,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
             ))}
 
             {sortedBets.length === 0 && (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-white py-8">
                 <div className="text-4xl mb-2">🎮</div>
                 <div>No Bets available</div>
               </div>
@@ -105,7 +106,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
           <div>
             <TransactionHistory userBets={userBets} />
             {
-              userBets.length === 0 && <div className="text-center text-gray-500 py-8">
+              userBets.length === 0 && <div className="text-center text-white py-8">
                 <div className="text-4xl mb-2">👤</div>
                 <div>My betting history</div>
                 <div className="text-sm mt-2">Login to view your bets</div>

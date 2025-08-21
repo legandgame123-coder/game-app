@@ -102,9 +102,52 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, user
         )}
 
         {activeTab === 'chart' && (
-          <div className="text-center text-gray-500 py-8">
-            <div className="text-4xl mb-2">📊</div>
-            <div>Chart view coming soon</div>
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 text-xs font-medium text-gray-500 pb-2 border-b">
+              <div>Period</div>
+              <div className="text-center">Number</div>
+            </div>
+            {gameHistory.map((round) => (
+              <div key={round._id} className="grid grid-cols-2 hover:bg-gray-50 rounded">
+                <div className="text-sm font-medium">
+                  {formatPeriod(round.period)}
+                </div>
+                <div className="text-center flex justify-center items-center">
+                  {/* Loop through all numbers from 1 to 9 */}
+                  {[...Array(9)].map((_, i) => {
+                    const number = i + 1; // Create numbers from 1 to 9
+
+                    // Check if this number is the winning number
+                    const isWinningNumber = round.winningNumber === number;
+
+                    return (
+                      <span
+                        key={number}
+                        className={`inline-block min-w-6 h-6 text-center rounded-full font-bold text-sm ${isWinningNumber
+                            ? [1, 3, 7, 9].includes(number) // Green for odd numbers (1, 3, 7, 9)
+                              ? 'bg-green-500'
+                              : [2, 4, 6, 8].includes(number) // Red for even numbers (2, 4, 6, 8)
+                                ? 'bg-red-500'
+                                : 'bg-purple-500' // Purple for others
+                            : 'text-gray-500' // Non-winning numbers are gray
+                          }`}
+                      >
+                        {number}
+                      </span>
+                    );
+                  })}
+                </div>
+
+
+              </div>
+            ))}
+
+            {gameHistory.length === 0 && (
+              <div className="text-center text-gray-500 py-8">
+                <div className="text-4xl mb-2">🎮</div>
+                <div>No game history available</div>
+              </div>
+            )}
           </div>
         )}
 

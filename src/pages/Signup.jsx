@@ -270,7 +270,7 @@ const Signup = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6 text-white">
+          <form onSubmit={handleSubmit} className="space-y-6 text-white overflow-hidden">
             <FormInput
               label="Full Name"
               id="name"

@@ -111,7 +111,7 @@ const PhoneInput = ({ value, onChange, error, onBlur }) => {
           onChange={handlePhoneNumberChange}
           onBlur={onBlur}
           placeholder="Enter phone number"
-          className={`flex-1 px-4 py-3 bg-gray-800 border-2 border-l-0 rounded-r-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-white placeholder-gray-400 ${
+          className={`w-full flex-1 px-4 py-3 bg-gray-800 border-2 border-l-0 rounded-r-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-white placeholder-gray-400 ${
             error 
               ? 'border-red-500 bg-red-900/20 focus:ring-red-500 focus:border-red-500' 
               : 'border-gray-600 hover:border-gray-500'

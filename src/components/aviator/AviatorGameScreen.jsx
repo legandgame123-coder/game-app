@@ -3,6 +3,7 @@ import { useAviatorSocket } from "../../context/AviatorSocketContext";
 import MovingDotsCircle from "./MovingDotsCircle"
 import { getUserBets } from "../../services/aviatorApi";
 import HistorySection from "./HistorySection";
+import Header from "./Header";
 
 export default function AviatorGameScreen() {
   const { socket, isConnected, multiplier, crashPoint, isRunning, liveBets, topBets, hasBet, setHasBet } =
@@ -19,19 +20,19 @@ export default function AviatorGameScreen() {
   }, [multiplier]);
 
   const fetchUserBets = async () => {
-      try {
-        const response = await getUserBets(userId);
-        if (response.data.success) {
-          setUserBets(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching game history:', error);
+    try {
+      const response = await getUserBets(userId);
+      if (response.data.success) {
+        setUserBets(response.data.data);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching game history:', error);
+    }
+  };
 
   const canvasRef = useRef(null);
 
-  const VIEW_W = 700;
+  const VIEW_W = 500;
   const VIEW_H = 300;
   const PAD = 24;
 
@@ -44,7 +45,7 @@ export default function AviatorGameScreen() {
     const x0 = PAD;
     const x1 = VIEW_W - PAD;
     const y0 = VIEW_H - PAD;
-    const yTop = PAD + 18;
+    const yTop = PAD + 15;
     const t = (x - x0) / (x1 - x0);
     if (t < 0) return y0;
     const eMax = Math.exp(curveStrength) - 1;
@@ -104,7 +105,8 @@ export default function AviatorGameScreen() {
 
         // Draw plane
         const planePos = points[points.length - 1];
-        const planeSize = 70;
+        const planeSize = 90;
+
         ctx.drawImage(
           planeImg.current,
           planePos.x - planeSize / 2,
@@ -185,8 +187,9 @@ export default function AviatorGameScreen() {
   const getPotentialWin = () => (bet * multiplier).toFixed(2);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen h-auto bg-gray-900 text-white">
+    <div className="flex flex-col items-center min-h-screen h-auto bg-gray-800 text-white">
       {/* GAME AREA */}
+      <Header />
       <div className="relative w-full max-w-5xl h-72 bg-gray-800 rounded-lg overflow-hidden">
         {/* <div className="absolute left-[-80px]"><MovingDotsCircle /> </div>
         <div className="absolute right-0"><MovingDotsCircle /> </div> */}
@@ -220,44 +223,46 @@ export default function AviatorGameScreen() {
       </div>
 
       {/* stats */}
-      <div className="mt-6 flex space-x-8 text-xl">
-        <p className="font-bold text-green-400">{multiplier.toFixed(2)}x</p>
-        <p className="font-bold text-yellow-400">${getPotentialWin()}</p>
-      </div>
+      <div className="bg-gray-800 px-6 py-4 flex flex-col md:flex-row gap-4 items-center w-full justify-between">
+        <div className="mt-6 flex space-x-8 text-xl">
+          <p className="font-bold text-green-400">{multiplier.toFixed(2)}x</p>
+          <p className="font-bold text-yellow-400">${getPotentialWin()}</p>
+        </div>
 
-      {/* controls */}
-      <div className="mt-8 flex items-center space-x-4">
-        <input
-          type="number"
-          min="1"
-          value={bet}
-          onChange={(e) => setBet(Number(e.target.value))}
-          className="w-24 p-2 rounded bg-gray-700 text-center"
-        />
-        {!hasBet ? (
-          <button
-            onClick={handlePlaceBet}
-            // disabled={!isConnected || isRunning || hasBet}
-            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
-          >
-            Place Bet
-          </button>
-        ) : !hasCashedOut ? (
-          <button
-            onClick={handleCashOut}
-            disabled={!isRunning}
-            className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600 disabled:opacity-50"
-          >
-            Cash Out
-          </button>
-        ) : (
-          <button
-            disabled
-            className="px-4 py-2 bg-gray-600 rounded opacity-50"
-          >
-            Bet Closed
-          </button>
-        )}
+        {/* controls */}
+        <div className="mt-8 flex items-center space-x-4">
+          <input
+            type="number"
+            min="1"
+            value={bet}
+            onChange={(e) => setBet(Number(e.target.value))}
+            className="w-24 p-2 rounded bg-gray-700 text-center"
+          />
+          {!hasBet ? (
+            <button
+              onClick={handlePlaceBet}
+              // disabled={!isConnected || isRunning || hasBet}
+              className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
+            >
+              Place Bet
+            </button>
+          ) : !hasCashedOut ? (
+            <button
+              onClick={handleCashOut}
+              disabled={!isRunning}
+              className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600 disabled:opacity-50"
+            >
+              Cash Out
+            </button>
+          ) : (
+            <button
+              disabled
+              className="px-4 py-2 bg-gray-600 rounded opacity-50"
+            >
+              Bet Closed
+            </button>
+          )}
+        </div>
       </div>
 
       <HistorySection

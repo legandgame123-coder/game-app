@@ -25,17 +25,42 @@ const ChickenSprite = ({ position, multiplierRefs, scrollContainer, gameState })
         transform: 'translateY(0)'
       }}
     >
-      {gameState == "gameOver" ? <div className="absolute bottom-0 bg-[url(./ice.png)] bg-contain" /> : <div></div>}
-{/* <div className="absolute bottom-0 min-w-20 w-auto h-full min-h-40 bg-[url('./fire.png')] bg-contain bg-no-repeat animate-[bgScroll_5s_linear_infinite]" /> */}
-{/* <div className="absolute bottom-0 min-w-20 w-auto h-full bg-fire bg-contain bg-no-repeat animate-bg-scroll" /> */}
-
-
-
-      <img
+      {gameState == "gameOver" ?
+        <div><img
+          src="/chicken-dead.png"
+          alt="chicken"
+          className="object-contain drop-shadow-lg"
+          style={{
+            animation: 'slideUpDown 2s ease-in-out',
+          }} />
+          <style>
+            {`
+          @keyframes slideUpDown {
+            0% {
+              transform: translateY(0px); /* Start below */
+            }
+            50% {
+              transform: translateY(-100px); /* Original position */
+            }
+            100% {
+              transform: translateY(0px); /* Go back below */
+            }
+          }
+        `}
+          </style>
+        </div>
+        :
+        <div>
+          <img
+            src="/chicken.webp"
+            alt="chicken"
+            className="w-14 h-14 object-contain drop-shadow-lg" />
+        </div>}
+      {/* <img
         src="/chicken.webp"
         alt="chicken"
         className="w-14 h-14 object-contain drop-shadow-lg"
-      />
+      /> */}
     </div>
   );
 };

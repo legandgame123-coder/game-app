@@ -25,7 +25,7 @@ const GameBoard = () => {
   const [activeFireIndex, setActiveFireIndex] = useState(null);
   const [difficulty, setDifficulty] = useState('Easy');
 
-  const options = ['Easy', 'Hard', 'Hardest'];
+  const options = ['Easy', 'Medium', 'Hard', 'Hardest'];
   const scrollContainerRef = useRef(null);
   const multiplierRefs = useRef([]);
 
@@ -112,6 +112,8 @@ const GameBoard = () => {
 
     // Check if next multiplier is 0 (game over)
     if (nextMultiplier === 0) {
+      setChickenPosition(nextPosition);
+      setVisitedPositions(prev => [...prev, nextPosition]);
       setGameState('gameOver');
       setTimeout(() => {
         setShowWinPopup(true);
@@ -252,8 +254,8 @@ const GameBoard = () => {
               key={level}
               onClick={() => setDifficulty(level)}
               className={`px-4 py-2 rounded-lg transition-colors duration-200 ${difficulty === level
-                  ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-200'
+                ? 'bg-blue-500 text-white'
+                : 'hover:bg-gray-200'
                 }`}
             >
               {level}

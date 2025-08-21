@@ -94,6 +94,7 @@ const Navbar = () => {
                       </a>
                     </MenuItem>
                   )}
+                  <a href='/change-password' className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none cursor-pointer">Change Password</a>
 
                   {games.map((gameKey) => {
                     const info = gameInfo[gameKey];

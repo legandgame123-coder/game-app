@@ -2,18 +2,17 @@ import React from 'react';
 import moment from 'moment';
 
 const TransactionHistory = ({ userBets }) => {
-  console.log(userBets)
   const formatTransactionType = (bet) => {
-      return (bet.winAmount > 0) ? 'Period Win' : 'Join Period';
+      return (bet.payoutAmount > 0) ? 'Period Win' : 'Join Period';
   };
 
   const getAmount = (bet) => {
-      return `+${bet.winAmount + bet.amount}`;
+      return (bet.payoutAmount > 0) ? `+${bet.payoutAmount}` : `${bet.betAmount}`
   };
 
   const getAmountStyle = (bet) => {
     return {
-      color: bet.winAmount > 0 ? 'green' : 'red',
+      color: bet.payoutAmount > 0 ? 'green' : 'red',
       fontWeight: 'bold'
     };
   };
@@ -22,7 +21,8 @@ const TransactionHistory = ({ userBets }) => {
     <div>
       <ul>
         {userBets.map((bet, index) => (
-          <li key={bet._id || index} style={{ marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px' }} className='flex justify-between items-center text-black w-full'>
+          <li key={bet._id || index} style={{ marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px' }} className='flex justify-between items-center text-white w-full'>
+            {console.log(bet)}
             <div>
               <p className='font-medium'>{formatTransactionType(bet)}</p>
             <div>{moment(bet?.createdAt).local().format('YYYY-MM-DD hh:mm A')}</div>
