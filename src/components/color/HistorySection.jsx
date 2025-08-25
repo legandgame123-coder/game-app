@@ -25,7 +25,7 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, user
   };
 
   return (
-    <div className="bg-white border-t">
+    <div className="border-t">
       {/* Tab Navigation */}
       <div className="flex border-b">
         {tabs.map((tab) => (
@@ -53,7 +53,7 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, user
             </div>
 
             {lastResult && (
-              <div className="grid grid-cols-3 gap-4 py-2 bg-yellow-50 rounded-lg animate-pulse">
+              <div className="grid grid-cols-3 gap-4 py-2 bg-yellow-50 text-black pl-2 rounded-lg animate-pulse">
                 <div className="text-sm font-medium">
                   {formatPeriod(lastResult.period)}
                 </div>
@@ -73,7 +73,7 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, user
             )}
 
             {gameHistory.map((round) => (
-              <div key={round._id} className="grid grid-cols-3 gap-4 py-2 hover:bg-gray-50 rounded">
+              <div key={round._id} className="grid grid-cols-3 gap-4 py-2 pl-2 hover:bg-gray-50 hover:text-black rounded">
                 <div className="text-sm font-medium">
                   {formatPeriod(round.period)}
                 </div>
@@ -108,7 +108,7 @@ const HistorySection = ({ activeTab, setActiveTab, gameHistory, lastResult, user
               <div className="text-center">Number</div>
             </div>
             {gameHistory.map((round) => (
-              <div key={round._id} className="grid grid-cols-2 hover:bg-gray-50 rounded">
+              <div key={round._id} className="grid grid-cols-2 pl-2 cursor:pointer hover:bg-gray-50 hover:text-black cursor-pointer rounded">
                 <div className="text-sm font-medium">
                   {formatPeriod(round.period)}
                 </div>

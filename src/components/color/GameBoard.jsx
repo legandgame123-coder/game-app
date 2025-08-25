@@ -72,7 +72,7 @@ const GameBoard = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen">
+    <div className="max-w-md mx-auto bg-transparent shadow-xl shadow-red-950 min-h-screen">
       <GameHeader 
         period={currentRound?.period || '---'}
         timeLeft={timeLeft}

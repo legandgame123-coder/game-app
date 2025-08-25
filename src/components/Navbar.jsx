@@ -47,7 +47,7 @@ const Navbar = () => {
   return (
     <nav className="bg-transparent w-full py-3 ">
       <div className='text-white flex justify-between items-center px-6 md:px-20'>
-        <div>LOGO</div>
+        <div className='md:flex hidden'>LOGO</div>
         {isAuthenticated ? <div className='flex items-center gap-4'>
           <BalanceButton />
           <div className='p-2 bg-yellow-300 rounded block md:hidden' onClick={() => setOpen(!open)}><Wallet size={24} color="black" /></div>
@@ -78,9 +78,9 @@ const Navbar = () => {
                 leaveTo="translate-x-full opacity-0"
               >
                 <MenuItems
-                  className="fixed top-0 left-0 z-50 min-h-screen w-64 md:w-64 sm:w-full transform bg-[#1a2c38] focus:outline-none pt-4"
+                  className="fixed top-0 left-0 z-50 min-h-screen w-64 md:w-64 sm:w-full transform bg-[#160003] focus:outline-none pt-4"
                 >
-                  <span className="block px-4 py-2 text-sm hover:bg-[#0f212e]">
+                  <span className="block px-4 py-2 text-sm cursor-pointer">
                     <p className='text-amber-200'>{user.fullName}</p>
                     <p>{user._id}</p>
                   </span>
@@ -88,13 +88,13 @@ const Navbar = () => {
                     <MenuItem>
                       <a
                         href="/admin"
-                        className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none"
+                        className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none"
                       >
                         Admin
                       </a>
                     </MenuItem>
                   )}
-                  <a href='/change-password' className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none cursor-pointer">Change Password</a>
+                  <a href='/change-password' className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none cursor-pointer">Change Password</a>
 
                   {games.map((gameKey) => {
                     const info = gameInfo[gameKey];
@@ -104,7 +104,7 @@ const Navbar = () => {
                       <MenuItem key={info.displayName}>
                         <a
                           href={info.link}
-                          className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none"
+                          className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none"
                         >
                           {info.displayName}
                         </a>
@@ -115,7 +115,7 @@ const Navbar = () => {
                   <MenuItem>
                     <a
                       href="/transactions"
-                      className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none"
+                      className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none"
                     >
                       Transactions
                     </a>
@@ -124,7 +124,7 @@ const Navbar = () => {
                   <MenuItem>
                     <a
                       onClick={logout}
-                      className="block px-4 py-2 text-sm hover:bg-[#0f212e] focus:outline-none cursor-pointer"
+                      className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none cursor-pointer"
                     >
                       Sign out
                     </a>
@@ -158,7 +158,7 @@ const Navbar = () => {
 
           {/* Menu Content */}
           <div className="p-6 text-center z-40 mt-12">
-            <span className="block bg-amber-300 py-2 rounded text-xl font-medium mb-4 cursor-pointer">Deposit</span>
+            <Link to={"deposite"}><span className="block bg-amber-300 py-2 rounded text-xl font-medium mb-4 cursor-pointer">Deposit</span></Link>
             <Link to={"/withdraw"} className="block bg-gray-600 py-2 text-amber-50 rounded text-xl font-medium mb-4 cursor-pointer">Withdraw</Link>
             <Link to={"/transactions"} className="block bg-transparent border py-2 text-white rounded text-xl font-medium cursor-pointer">Transaction history</Link>
           </div>

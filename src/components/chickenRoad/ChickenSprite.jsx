@@ -26,13 +26,21 @@ const ChickenSprite = ({ position, multiplierRefs, scrollContainer, gameState })
       }}
     >
       {gameState == "gameOver" ?
-        <div><img
-          src="/chicken-dead.png"
-          alt="chicken"
-          className="object-contain drop-shadow-lg"
-          style={{
-            animation: 'slideUpDown 2s ease-in-out',
-          }} />
+        <div>
+          <div className="absolute bottom-0 left-[-4rem] z-50">
+            <img
+              src="/fire.gif" // If placed in public folder
+              alt="fire"
+              className="object-contain min-w-[12rem]"
+            />
+          </div>
+          <img
+            src="/chicken-dead.png"
+            alt="chicken"
+            className="object-contain drop-shadow-lg min-w-[6rem]"
+            style={{
+              animation: 'slideUpDown 2s ease-in-out',
+            }} />
           <style>
             {`
           @keyframes slideUpDown {

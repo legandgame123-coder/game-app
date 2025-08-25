@@ -47,8 +47,14 @@ function Mines() {
         if (revealedTiles.includes(index)) return;
 
         if (currentMines.includes(index)) {
+            const audio = new Audio('/bomb.m4a'); // path relative to /public
+            audio.play().catch((e) => {
+                console.warn('Autoplay failed. User interaction may be required.', e);
+            });
             setGameState('lost');
-            setShowWinPopup(true)
+            setTimeout(() => {
+                setShowWinPopup(true)
+            }, 1000);
             setBalance(balance - bet);
             setRevealedTiles([...revealedTiles, index]);
             stopMineGame(user._id, bet, 0)

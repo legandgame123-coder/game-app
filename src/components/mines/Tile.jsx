@@ -71,7 +71,7 @@ function Tile({ index, gameState, isRevealed, isMine, onClick }) {
             userSelect: 'none',
           }}
         >
-          {!isRevealed ? (gameState === 'setup' ? '?' : '') : ''}
+          {!isRevealed ? (gameState === 'setup' ? '' : '') : ''}
         </div>
 
         {/* Back face */}

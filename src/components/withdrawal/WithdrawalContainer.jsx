@@ -8,7 +8,7 @@ const WithdrawalContainer = () => {
   const [selectedMethod, setSelectedMethod] = useState("INR");
 
   return (
-    <div className="p-6 bg-zinc-900 text-white min-h-screen flex flex-col items-center">
+    <div className="p-6 bg-[#160003] text-white min-h-screen flex flex-col items-center">
       <WithdrawalTabs selected={selectedMethod} onSelect={setSelectedMethod} />
       <div className="mt-6">
         {selectedMethod === "INR" && <WithdrawalFormINR />}

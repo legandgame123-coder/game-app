@@ -67,7 +67,7 @@ const BettingSection = ({
               disabled={disabled}
             >
               <div>{label}</div>
-              <div className="text-xs opacity-90">{mult}</div>
+              {/* <div className="text-xs opacity-90">{mult}</div> */}
             </button>
           ))}
         </div>
@@ -76,12 +76,12 @@ const BettingSection = ({
       {/* Number Betting */}
       <div>
         <h3 className="text-sm font-medium text-gray-600 mb-2">Select Number</h3>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-2 justify-center items-center md:px-12">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
             <button
               key={num}
               onClick={() => handleBetSelect('number', num.toString())}
-              className={`${getNumberColor(num)} py-3 px-4 rounded-lg font-bold text-lg transition-all ${
+              className={`${getNumberColor(num)} h-12 w-12 rounded-full font-bold text-lg transition-all ${
                 isSelected('number', num.toString()) ? 'ring-2 ring-blue-400 ring-offset-2' : ''
               } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'}`}
               disabled={disabled}
@@ -108,7 +108,7 @@ const BettingSection = ({
               disabled={disabled}
             >
               <div className="font-bold">{label}</div>
-              <div className="text-xs opacity-70">{desc}</div>
+              {/* <div className="text-xs opacity-70">{desc}</div> */}
             </button>
           ))}
         </div>
@@ -128,9 +128,9 @@ const BettingSection = ({
           <input
             type="number"
             value={betAmount}
-            onChange={(e) => setBetAmount(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) => setBetAmount(parseInt(e.target.value))}
             className="flex-1 text-center py-2 border border-gray-300 rounded-lg font-medium"
-            min="1"
+            min="10"
             disabled={disabled}
           />
           <button

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-export default function MovingDotsCircle() {
+export default function MovingDotsLine() {
   const [isMoving, setIsMoving] = useState(true);
-  const dotCount = 12;
-  const radius = 120;
+  const dotCount = 15;
   const containerHeight = 300;
 
-  // Each dot has its own offset
+  // Initial offsets for each dot (staggered positions)
   const [dotOffsets, setDotOffsets] = useState(
-    Array.from({ length: dotCount }, (_, i) => i * 25) // staggered initial positions
+    Array.from({ length: dotCount }, (_, i) => i * 20)
   );
 
   useEffect(() => {
@@ -16,39 +15,29 @@ export default function MovingDotsCircle() {
 
     const interval = setInterval(() => {
       setDotOffsets((prev) =>
-        prev.map((offset) => (offset > containerHeight ? 0 : offset + 2)) // loop upward
+        prev.map((offset) => (offset < 0 ? containerHeight : offset - 2)) // loop upward
       );
-    }, 50); // smooth speed
+    }, 60); // smoother animation (30ms ≈ 33fps)
 
     return () => clearInterval(interval);
   }, [isMoving]);
 
   return (
-    <div className="flex flex-col">
-      {/* Container */}
-      <div className="relative w-[120px] h-[300px]">
-        {/* Curved Red Trail */}
-        {/* <div className="absolute w-full h-full left-30 rounded-full border-l-[4px] border-red-600 opacity-50" /> */}
-
-        {/* Moving Dots */}
-        {dotOffsets.map((offset, i) => {
-        //   const angle = (Math.PI * i) / (dotCount - 1); // spread dots evenly on 180° arc
-          const x = radius * Math.sin(90) * 0.4; // scaled X offset for curve
-          const y = radius * Math.cos(0); // base Y position
-
-          return (
-            <div
-              key={i}
-              className="absolute w-2 h-2 rounded-full bg-white shadow-[0_0_6px_white]"
-              style={{
-                left: `calc(50% + ${x}px)`,
-                bottom: `${(y + offset) % containerHeight}px`,
-                transform: "translateX(-50%)",
-              }}
-            />
-          );
-        })}
-      </div>
+    <div
+      className="flex items-center justify-center w-full"
+      style={{ height: containerHeight }}
+    >
+      {dotOffsets.map((offset, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-white shadow-[0_0_6px_white]"
+          style={{
+            right: "0", // center horizontally
+            bottom: `${offset % containerHeight}px`,
+            transform: "translateX(-50%)",
+          }}
+        />
+      ))}
     </div>
   );
 }

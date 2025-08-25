@@ -72,7 +72,7 @@ const WithdrawalFormETH = () => {
         onChange={handleChange}
       />
 
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+      <button type="submit" className="w-full cursor-pointer bg-gradient-to-b shadow-xs shadow-[#9C1137] from-[#9C1137] via-[#9C1137] to-black text-white py-2 rounded">
         Submit Withdrawal
       </button>
     </form>

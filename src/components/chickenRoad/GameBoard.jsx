@@ -7,7 +7,7 @@ import { startChickenGame, stopChickenGame } from "../../services/chickenRoad";
 import { useBalance } from "../../context/BalanceContext";
 import { FireSVG } from "./FireSVG";
 
-const initialMultipliers = [1.02, 1.06, 1.10, 1.14, 1.18, 1.22, 1.26, 0];
+const initialMultipliers = [1.02, 0];
 
 const GameBoard = () => {
   const [multipliers, setMultipliers] = useState(initialMultipliers);
@@ -24,6 +24,7 @@ const GameBoard = () => {
   const [showSVG, setShowSVG] = useState(false);
   const [activeFireIndex, setActiveFireIndex] = useState(null);
   const [difficulty, setDifficulty] = useState('Easy');
+  const [difficultyMultiplier, setDifficultyMultiplier] = useState(0.4);
 
   const options = ['Easy', 'Medium', 'Hard', 'Hardest'];
   const scrollContainerRef = useRef(null);
@@ -51,13 +52,17 @@ const GameBoard = () => {
     const previousValue = multipliers[lastZeroIndex - 1] || 1;
     const newMultipliers = [];
 
-    let currentValue = previousValue + 0.4;
+    let currentValue = previousValue + difficultyMultiplier;
     for (let i = 0; i < 20; i++) {
       currentValue = parseFloat((currentValue + 0.4).toFixed(2));
       newMultipliers.push(currentValue);
     }
     setMultipliers(prev => [...prev, ...newMultipliers]);
   };
+
+  useEffect(() => {
+    addMoreMultipliers()
+  }, [difficultyMultiplier])
 
   // Handle scroll to implement infinite scrolling
   const handleScroll = () => {
@@ -87,7 +92,15 @@ const GameBoard = () => {
         setMultipliers(fetchedMultipliers);
 
         if (fetchedMultipliers[0] === 0) {
-          setShowWinPopup(true);
+          setGameState('gameOver');
+          const audio = new Audio('/fire.m4a');
+          audio.play().catch((e) => {
+            console.warn('Playback failed:', e);
+          });
+          setChickenPosition(0);
+          setTimeout(() => {
+            setShowWinPopup(true);
+          }, 1000);
           setWinAmount(0);
           return;
         }
@@ -112,6 +125,10 @@ const GameBoard = () => {
 
     // Check if next multiplier is 0 (game over)
     if (nextMultiplier === 0) {
+      const audio = new Audio('/fire.m4a');
+      audio.play().catch((e) => {
+        console.warn('Playback failed:', e);
+      });
       setChickenPosition(nextPosition);
       setVisitedPositions(prev => [...prev, nextPosition]);
       setGameState('gameOver');
@@ -211,6 +228,38 @@ const GameBoard = () => {
     return (betAmount * getCurrentMultiplier()).toFixed(2);
   };
 
+  const regenerateMultipliers = (baseMultiplier = 1, multiplier = difficultyMultiplier) => {
+    const newMultipliers = [];
+    let currentValue = baseMultiplier;
+
+    for (let i = 0; i < 20; i++) {
+      currentValue = parseFloat((currentValue + multiplier).toFixed(2));
+      newMultipliers.push(currentValue);
+    }
+
+    newMultipliers.push(0); // Add crash point
+    setMultipliers(newMultipliers);
+  };
+
+
+  const handleDifficulty = (level) => {
+  if (gameState !== 'idle') {
+    alert("You can't change difficulty during a game!");
+    return;
+  }
+
+  let newMultiplier = 0.4; // Default for Easy
+  if (level === 'Medium') newMultiplier = 0.6;
+  else if (level === 'Hard') newMultiplier = 0.75;
+  else if (level === 'Hardest') newMultiplier = 0.9;
+
+  setDifficulty(level);
+  setDifficultyMultiplier(newMultiplier);
+
+  regenerateMultipliers(0.62, newMultiplier); // Pass directly
+};
+
+
   return (
     <div className="w-full h-full flex flex-col-reverse">
       {/* Game Controls */}
@@ -252,7 +301,7 @@ const GameBoard = () => {
           {options.map((level) => (
             <button
               key={level}
-              onClick={() => setDifficulty(level)}
+              onClick={() => handleDifficulty(level)}
               className={`px-4 py-2 rounded-lg transition-colors duration-200 ${difficulty === level
                 ? 'bg-blue-500 text-white'
                 : 'hover:bg-gray-200'
@@ -271,7 +320,7 @@ const GameBoard = () => {
                 onClick={startGame}
                 className="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-semibold text-white"
               >
-                <span>Start Game</span>
+                <span className="text-sm">Start Game</span>
               </button>
             )}
 
@@ -281,14 +330,14 @@ const GameBoard = () => {
                   onClick={goNext}
                   className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-semibold text-white"
                 >
-                  <span>Go</span>
+                  <span className="text-sm">Go</span>
                 </button>
 
                 <button
                   onClick={() => cashOut()}
-                  className="flex items-center space-x-2 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors font-semibold text-white"
+                  className="flex items-center space-x-2 md:px-6 px-2 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-colors font-semibold text-white"
                 >
-                  <span>Cash Out</span>
+                  <span className="text-xs md:text-sm">Cash Out</span>
                 </button>
               </>
             )}

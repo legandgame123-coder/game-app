@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 
 const DepositFlow = () => {
     const [method, setMethod] = useState('UPI'); // default
-    const [amount, setAmount] = useState('');
+    const [amount, setAmount] = useState(200);
     const [payNumber, setPayNumber] = useState('');
     const [cryptoType, setCryptoType] = useState('usdt');
     const [network, setNetwork] = useState('erc20');
     const [showPopup, setShowPopup] = useState(false);
 
 
-    const quickAmounts = [100, 500, 1000, 5000];
+    const quickAmounts = [100, 200, 300, 500, 1000, 2000, 3000, 5000];
 
     const user = JSON.parse(localStorage.getItem("user"))
     const userId = user._id;
@@ -54,25 +54,27 @@ const DepositFlow = () => {
 
     const renderAmountSelection = () => (
         <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2">Select Amount ({getCurrencySymbol()})</h2>
-            <div className="flex flex-wrap gap-3 mb-3">
+            <h2 className="text-lg font-medium flex justify-between mb-2 text-gray-200">Deposit Amount: <span>Min: 100</span> <span>Max: 5000</span></h2>
+            <input
+                type="number"
+                value={amount}
+                min={100}
+                max={5000}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder={`Enter amount in ${getCurrencySymbol()}`}
+                className="shadow-[#9C1137] shadow-xs px-4 py-2 rounded-md w-full text-white outline-none"
+            />
+            <div className="grid grid-cols-4 gap-3 mt-3">
                 {quickAmounts.map((amt) => (
                     <button
                         key={amt}
                         onClick={() => setAmount(amt)}
-                        className={`px-4 py-2 border rounded-md ${amount === amt ? 'bg-blue-600 text-white' : 'bg-white text-black'}`}
+                        className={`px-4 py-2 rounded-md ${amount === amt ? 'bg-[#9C1137] font-medium text-amber-200' : 'bg-[#3d1017] text-gray-200'}`}
                     >
-                        {getCurrencySymbol()} {amt}
+                        {amt}
                     </button>
                 ))}
             </div>
-            <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder={`Enter amount in ${getCurrencySymbol()}`}
-                className="border px-4 py-2 rounded-md w-full"
-            />
         </div>
     );
 
@@ -84,7 +86,7 @@ const DepositFlow = () => {
                     <button
                         key={type}
                         onClick={() => setCryptoType(type)}
-                        className={`px-4 py-2 border rounded-md ${cryptoType === type ? 'bg-green-600 text-white' : 'bg-white text-black'}`}
+                        className={`px-4 py-2 border rounded-md ${cryptoType === type ? 'bg-[#9C1137] font-medium text-amber-200' : 'bg-[#3d1017] text-gray-200'}`}
                     >
                         {type.toUpperCase()}
                     </button>
@@ -96,7 +98,7 @@ const DepositFlow = () => {
                     <button
                         key={net}
                         onClick={() => setNetwork(net)}
-                        className={`px-4 py-2 border rounded-md ${network === net ? 'bg-purple-600 text-white' : 'bg-white text-black'}`}
+                        className={`px-4 py-2 border rounded-md ${network === net ? 'bg-[#9C1137] font-medium text-amber-200' : 'bg-[#3d1017] text-gray-200'}`}
                     >
                         {net.toUpperCase()}
                     </button>
@@ -115,7 +117,7 @@ const DepositFlow = () => {
     );
 
     const renderPayInput = () => (
-        <div className="mb-4">
+        <div className="mb-4 w-full">
             <label className="block mb-2 font-semibold">
                 {method === 'UPI' ? 'UPI Transaction ID' : 'Crypto Transaction Hash'}
             </label>
@@ -123,19 +125,18 @@ const DepositFlow = () => {
                 type="text"
                 value={payNumber}
                 onChange={(e) => setPayNumber(e.target.value)}
-                className="border px-4 py-2 rounded-md w-full"
+                className="shadow-[#9C1137] shadow-xs outline-none px-4 py-2 rounded-md w-full"
                 placeholder={method === 'UPI' ? 'Enter UPI Transaction ID' : 'Enter Crypto Tx Hash'}
             />
         </div>
     );
 
     return (
-        <div className='bg-gradient-to-br from-gray-900 via-gray-800 to-black py-4 px-2 flex items-center min-h-screen'>
-            <div className="max-w-md mx-auto p-6 text-white bg-transparent rounded-md shadow-lg shadow-gray-600 min-h-screen">
+        <div className='bg-[#160003] text-white py-4 px-2 flex justify-center min-h-screen'>
+            <div className="flex items-start flex-col min-h-screen">
                 {/* Step 1 - Select Method */}
-                <div className="mb-4">
-                    <h2 className="text-xl font-bold mb-2">Select Payment Method</h2>
-                    <div className="flex gap-4">
+                <div className="mb-4 w-full">
+                    <div className="flex gap-4 justify-center">
                         {['UPI', 'Crypto'].map((m) => (
                             <button
                                 key={m}
@@ -144,7 +145,7 @@ const DepositFlow = () => {
                                     setAmount('');
                                     setPayNumber('');
                                 }}
-                                className={`px-4 py-2 border rounded-md ${method === m ? 'bg-blue-500 text-white' : 'bg-white text-black'}`}
+                                className={`px-4 py-2 shadow-sm shadow-[#9C1137] rounded-md ${method === m ? 'bg-[#9C1137] font-medium text-amber-200' : 'bg-[#3d1017] text-gray-200'}`}
                             >
                                 {m.toUpperCase()}
                             </button>
@@ -168,7 +169,7 @@ const DepositFlow = () => {
                 {amount && payNumber && (
                     <button
                         onClick={handleSubmit}
-                        className="w-full mt-4 bg-green-600 text-white py-2 rounded-md"
+                        className="w-full mt-4 cursor-pointer bg-gradient-to-b shadow-xs shadow-[#9C1137] from-[#9C1137] via-[#9C1137] to-black text-white py-2 rounded-md"
                     >
                         Submit Deposit
                     </button>
