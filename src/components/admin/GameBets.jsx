@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
+import BottomBar from '../BottomBar';
 
 const GameBets = ({ userId }) => {
-  const [userBets, setUserBets] = useState([]);  
+  const [userBets, setUserBets] = useState([]);
   const [selectedGameType, setSelectedGameType] = useState('aviator');  // Default to "aviator"
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchUserBets = async (gameType) => {
@@ -25,10 +26,10 @@ const GameBets = ({ userId }) => {
   const formatTransactionType = (bet) => bet.payoutAmount > 0 ? 'Period Win' : 'Join Period';
 
   const getAmount = (bet) => {
-  // Format the amount with two decimal places
-  const amount = bet.payoutAmount > 0 ? bet.payoutAmount : bet.betAmount;
-  return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)}`;
-};
+    // Format the amount with two decimal places
+    const amount = bet.payoutAmount > 0 ? bet.payoutAmount : bet.betAmount;
+    return `${amount >= 0 ? '+' : ''}${amount.toFixed(2)}`;
+  };
 
 
   const getAmountStyle = (bet) => ({
@@ -41,20 +42,23 @@ const GameBets = ({ userId }) => {
   }, [selectedGameType]);
 
   return (
-    <div className="transaction-history text-white flex flex-col gap-8">
-      <div className="game-type-selector flex gap-8">
+    <div className="max-w-3xl mx-auto py-2 pb-20 text-gray-300 bg-[#160003] min-h-screen min-w-screen items-center flex flex-col">
+      <h2 className="text-xl font-semibold mb-4 text-amber-200">Game History</h2>
+      <div className='border-t md:hidden fixed left-0 bottom-0 z-20'><BottomBar /></div>
+      <div className="game-type-selector pb-4 flex gap-8">
         <label htmlFor="gameType">Select Game Type: </label>
         <select
           id="gameType"
           value={selectedGameType}
           onChange={(e) => setSelectedGameType(e.target.value)}
-          className='bg-gray-800'
+          className="bg-transparent shadow-xs shadow-[#9C1137] px-2 py-1"
         >
-          <option value="aviator">aviator</option>
-          <option value="mining">mining</option>
-          <option value="chicken">chicken</option>
-          <option value="color">color</option>
+          <option value="aviator" className="bg-[#160003] hover:bg-[#160003]">Aviator</option>
+          <option value="mining" className="bg-[#160003] hover:bg-[#160003]">Mining</option>
+          <option value="chicken" className="bg-[#160003] hover:bg-[#160003]">Chicken</option>
+          <option value="color" className="bg-[#160003] hover:bg-[#160003]">Color</option>
         </select>
+
       </div>
 
       {loading ? (
@@ -62,27 +66,31 @@ const GameBets = ({ userId }) => {
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
-        <ul>
-          {userBets.map((bet, index) => (
-            bet ? (
-              <li
-                key={bet._id || index}
-                style={{
-                  marginBottom: '10px',
-                  borderBottom: '1px solid #eee',
-                  paddingBottom: '10px',
-                }}
-                className="flex justify-between items-center text-white w-full"
-              >
-                <div>
-                  <p className="font-medium">{formatTransactionType(bet)}</p>
-                  <div>{moment(bet?.createdAt).local().format('YYYY-MM-DD hh:mm A')}</div>
-                </div>
-                <div style={getAmountStyle(bet)}>{getAmount(bet)}</div>
-              </li>
-            ) : null
-          ))}
-        </ul>
+        <table className="min-w-full rounded-lg shadow-md">
+          <thead>
+            <tr className="bg-[#451118] text-[#9f3e3e] text-center text-sm font-semibold">
+              <th className="px-4 py-3">Date</th>
+              <th className="px-4 py-3">Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {userBets.map((bet, index) => (
+              bet ? (
+                <tr
+                  key={bet._id || index}
+                  className="cursor-pointer transition-colors duration-200 text-center"
+                >
+                  <td className="px-4 py-3">{moment(bet?.createdAt).local().format('YYYY-MM-DD hh:mm A')}</td>
+                  <td
+                    style={getAmountStyle(bet)}
+                  >
+                    {getAmount(bet)}
+                  </td>
+                </tr>
+              ) : null
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

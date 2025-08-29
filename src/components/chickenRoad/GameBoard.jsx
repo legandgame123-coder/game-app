@@ -86,17 +86,27 @@ const GameBoard = () => {
       return;
     }
 
-    startChickenGame(user._id, betAmount)
+    startChickenGame(user._id, betAmount, difficulty)
       .then(data => {
         const fetchedMultipliers = data.data.multipliers;
         setMultipliers(fetchedMultipliers);
 
         if (fetchedMultipliers[0] === 0) {
           setGameState('gameOver');
-          const audio = new Audio('/fire.m4a');
-          audio.play().catch((e) => {
-            console.warn('Playback failed:', e);
-          });
+          const fireAudio = new Audio('/fire.m4a');
+          const loseAudio = new Audio('/lose.wav');
+
+          fireAudio.play()
+            .then(() => {
+              fireAudio.onended = () => {
+                loseAudio.play().catch((e) => {
+                  console.warn('Lose sound failed:', e);
+                });
+              };
+            })
+            .catch((e) => {
+              console.warn('Fire sound failed:', e);
+            });
           setChickenPosition(0);
           setTimeout(() => {
             setShowWinPopup(true);
@@ -125,10 +135,20 @@ const GameBoard = () => {
 
     // Check if next multiplier is 0 (game over)
     if (nextMultiplier === 0) {
-      const audio = new Audio('/fire.m4a');
-      audio.play().catch((e) => {
-        console.warn('Playback failed:', e);
-      });
+      const fireAudio = new Audio('/fire.m4a');
+      const loseAudio = new Audio('/lose.wav');
+
+      fireAudio.play()
+        .then(() => {
+          fireAudio.onended = () => {
+            loseAudio.play().catch((e) => {
+              console.warn('Lose sound failed:', e);
+            });
+          };
+        })
+        .catch((e) => {
+          console.warn('Fire sound failed:', e);
+        });
       setChickenPosition(nextPosition);
       setVisitedPositions(prev => [...prev, nextPosition]);
       setGameState('gameOver');
@@ -157,6 +177,10 @@ const GameBoard = () => {
     const winnings = betAmount * currentMultiplier;
 
     stopChickenGame(user._id, betAmount, winnings)
+    const audio = new Audio('/win.wav');
+    audio.play().catch((e) => {
+      console.warn('Playback failed:', e);
+    });
 
     setWinAmount(winnings);
     setBalance(prev => prev + winnings);
@@ -243,21 +267,21 @@ const GameBoard = () => {
 
 
   const handleDifficulty = (level) => {
-  if (gameState !== 'idle') {
-    alert("You can't change difficulty during a game!");
-    return;
-  }
+    if (gameState !== 'idle') {
+      alert("You can't change difficulty during a game!");
+      return;
+    }
 
-  let newMultiplier = 0.4; // Default for Easy
-  if (level === 'Medium') newMultiplier = 0.6;
-  else if (level === 'Hard') newMultiplier = 0.75;
-  else if (level === 'Hardest') newMultiplier = 0.9;
+    let newMultiplier = 0.4; // Default for Easy
+    if (level === 'Medium') newMultiplier = 0.6;
+    else if (level === 'Hard') newMultiplier = 0.75;
+    else if (level === 'Hardest') newMultiplier = 0.9;
 
-  setDifficulty(level);
-  setDifficultyMultiplier(newMultiplier);
+    setDifficulty(level);
+    setDifficultyMultiplier(newMultiplier);
 
-  regenerateMultipliers(0.62, newMultiplier); // Pass directly
-};
+    regenerateMultipliers(0.62, newMultiplier); // Pass directly
+  };
 
 
   return (

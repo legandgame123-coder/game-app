@@ -3,11 +3,11 @@ import moment from 'moment';
 
 const TransactionHistory = ({ userBets }) => {
   const formatTransactionType = (bet) => {
-      return (bet.payoutAmount > 0) ? 'Period Win' : 'Join Period';
+    return (bet.payoutAmount > 0) ? 'Period Win' : 'Join Period';
   };
 
   const getAmount = (bet) => {
-      return (bet.payoutAmount > 0) ? `+${bet.payoutAmount}` : `${bet.betAmount}`
+    return (bet.payoutAmount > 0) ? `+${bet.payoutAmount}` : `${bet.betAmount}`
   };
 
   const getAmountStyle = (bet) => {
@@ -21,14 +21,12 @@ const TransactionHistory = ({ userBets }) => {
     <div>
       <ul>
         {userBets.map((bet, index) => (
-          <li key={bet._id || index} style={{ marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px' }} className='flex justify-between items-center text-white w-full'>
-            {console.log(bet)}
-            <div>
-              <p className='font-medium'>{formatTransactionType(bet)}</p>
-            <div>{moment(bet?.createdAt).local().format('YYYY-MM-DD hh:mm A')}</div>
+          <div key={index} className="grid grid-cols-2 text-center py-2 rounded">
+            <div className="text-sm font-medium">
+              {moment(bet?.createdAt).local().format('YYYY-MM-DD hh:mm A')}
             </div>
             <div style={getAmountStyle(bet)}>{getAmount(bet)}</div>
-          </li>
+          </div>
         ))}
       </ul>
     </div>

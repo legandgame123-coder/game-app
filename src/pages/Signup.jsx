@@ -168,7 +168,8 @@ const Signup = () => {
           setRegistrationData({
             userId: result.userId || result.id || result.data?._id,
             email: formData.email,
-            phone: formData.phone
+            phone: formData.phone,
+            password: formData.password
           });
           
           // Show OTP verification modal
@@ -354,6 +355,13 @@ const Signup = () => {
                 Sign in
               </Link>
             </p>
+            <p className="text-sm text-gray-400">Or</p>
+            <p className="text-gray-400">
+              Login with{' '}
+              <Link to={"/login"} className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200">
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
 
@@ -379,6 +387,7 @@ const Signup = () => {
           onClose={handleCloseOTPModal}
           userId={registrationData.userId}
           userEmail={registrationData.email}
+          password={registrationData.password}
           onVerificationSuccess={handleOTPVerificationSuccess}
         />
       )}

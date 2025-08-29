@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ChickenGame from './pages/ChickenGame';
 import Home from './pages/Home';
 import { BalanceProvider } from './context/BalanceContext';
@@ -22,6 +22,9 @@ import Color from './pages/Color';
 import { AviatorSocketProvider } from './context/AviatorSocketContext';
 import Spinner from "./components/Spinner"
 import ChangePassword from './components/ChangePassword';
+import TelegramSubscription from './components/TelegramSubscription';
+import GameBets from './components/admin/GameBets';
+import RankingPage from './components/RankingPage';
 
 const App = () => {
 
@@ -47,6 +50,9 @@ const App = () => {
     }
   }, [])
 
+  const user = JSON.parse(localStorage.getItem("user"))
+  const userId = user?._id
+
   return (
     <AuthProvider>
       <BalanceProvider>
@@ -63,6 +69,9 @@ const App = () => {
                 <Route path="/spinner" element={<Spinner />} />
                 <Route path="/change-password" element={<ChangePassword />} />
                 <Route path="/color-trading" element={<Color />} />
+                <Route path="/telegram-subscription/:gameName" element={<TelegramSubscription />} />
+                <Route path="/bets" element={<GameBets userId={userId} />} />
+                <Route path="/ranking" element={<RankingPage />} />
 
             //private routes
                 <Route path="/withdraw" element={<PrivateRoute children={<WithdrawalContainer />} />} />

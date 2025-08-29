@@ -1,12 +1,13 @@
 import axios from "axios";
 
 
-const startChickenGame = async ( userId, betAmount) => {
+const startChickenGame = async ( userId, betAmount, difficulty) => {
   try {
     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/chicken-road/start`, {
       userId,
       gameType: 'chicken',
-      betAmount: betAmount
+      betAmount: betAmount,
+      difficulty
     });
 
     return response.data;

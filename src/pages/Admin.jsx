@@ -7,6 +7,7 @@ import AdminController from '../components/admin/AdminController'
 import GameRoundsTable from '../components/admin/GameRoundsTable'
 import Deposite from '../components/admin/Deposite'
 import AllUsers from '../components/admin/AllUsers'
+import Telegram from '../components/admin/Telegram'
 
 const Admin = () => {
   const [selectField, setSelectField] = useState('transaction')
@@ -16,13 +17,13 @@ const Admin = () => {
     return (
       <div className='bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex flex-col items-center'>
         <AdminTabs selected={selectField} onSelect={setSelectField} />
-        <div className='mt-6'>
+        <div className=''>
           {selectField === 'transaction' && <AllUsers />}
           {selectField === 'deposite' && <Deposite />}
           {selectField === 'games' && <Games />}
           {selectField === 'withdraw-requests' && <Withdrawals />}
           {selectField === 'admin-management' && <AdminController />}
-          {selectField === 'telegram' && <GameRoundsTable />}
+          {selectField === 'telegram' && <Telegram />}
         </div>
       </div>
     )

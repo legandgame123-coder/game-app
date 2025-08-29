@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 const Deposite = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterMethod, setFilterMethod] = useState(""); // Filter state for 'upi' or 'crypto'
+  const [filterMethod, setFilterMethod] = useState("upi"); // Filter state for 'upi' or 'crypto'
 
   // Fetch transaction history from API
   const fetchTransactionHistory = async () => {

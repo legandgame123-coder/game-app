@@ -46,8 +46,8 @@ const TransactionHistory = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-4 text-gray-300 bg-[#1a2c38] min-h-screen min-w-full items-center flex flex-col">
-            <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
+        <div className="max-w-3xl mx-auto py-2 text-gray-300 bg-[#160003] min-h-screen min-w-full items-center flex flex-col">
+            <h2 className="text-xl font-semibold mb-4 text-amber-200">Transaction History</h2>
 
             {loading && <p>Loading...</p>}
             {error && <p className="text-red-500">{error}</p>}
@@ -55,30 +55,33 @@ const TransactionHistory = () => {
             {!loading && transactions.length === 0 && <p>No transactions found.</p>}
 
             {!loading && transactions.length > 0 && (
-                <div className="space-y-4 min-w-96">
-                    {transactions.map((tx) => (
-                        <div key={tx._id} className="border p-3 flex flex-col gap-2 rounded shadow-sm">
-                            <span className='flex justify-between'>
-                                <p>
-                                    {new Date(tx.createdAt).toLocaleDateString("en-US", {
-                                        day: "2-digit",
-                                        month: "long",
-                                        year: "numeric"
-                                    })}
-                                </p>
-                                <p className={`${tx.status === "approved" ? "text-green-400" : "text-gray-200"}`}>
-                                    {tx.status}
-                                </p>
+                <table className="min-w-full rounded-lg shadow-md">
+                    <thead>
+                        <tr className="bg-[#451118] text-[#9f3e3e] text-left text-sm font-semibold">
+                            <th className="px-4 py-3">Type</th>
+                            <th className="px-4 py-3">Change</th>
+                            <th className="px-4 py-3">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions.map((tx) => (
+                            <tr
+                                key={tx.id}
+                                className="cursor-pointer transition-colors duration-200"
+                            >
+                                <td className="px-4 py-3">{tx.type}</td>
+                                <td className="px-4 py-3">{tx.method}</td>
+                                <td
+                                    className={`px-4 py-3 ${tx.status === "approved" ? "text-green-500" : "text-gray-400"
+                                        }`}
+                                >
+                                    ₹{tx.amount}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
-                            </span>
-                            <span className='flex justify-between font-bold'>
-                                <p>{tx.type}</p>
-                                <p>₹{tx.amount}</p>
-                                </span>
-                                <p>{tx.method}</p>
-                        </div>
-                    ))}
-                </div>
             )}
 
             {/* Pagination */}

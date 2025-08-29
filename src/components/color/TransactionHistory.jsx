@@ -28,11 +28,8 @@ const TransactionHistory = ({ userBets }) => {
     <div>
       <ul>
         {userBets.map((bet, index) => (
-          <li key={bet._id || index} style={{ marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '10px' }} className='flex justify-between items-center'>
-            <div>
-              <p className='font-medium'>{formatTransactionType(bet)}</p>
+          <li key={bet._id || index} className='flex justify-around items-center py-2'>
             <div>{moment(bet.createdAt).format('YYYY-MM-DD HH:mm')}</div>
-            </div>
             <div style={getAmountStyle(bet)}>{getAmount(bet)}</div>
           </li>
         ))}

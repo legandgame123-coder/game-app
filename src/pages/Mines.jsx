@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import GameBoard from '../components/mines/GameBoard';
 import { startMineGame, stopMineGame } from '../services/mines';
 import { useAuth } from "../context/AuthContext";
@@ -16,15 +16,29 @@ const minePositions = [
 function Mines() {
     const [gameState, setGameState] = useState('setup');
     const [mineCount, setMineCount] = useState(3);
+    let multp = 0.2 + (0.05 * (mineCount - 3))
     const [winAmount, SetWinAmount] = useState(0)
     const [currentMines, setCurrentMines] = useState([]);
     const [revealedTiles, setRevealedTiles] = useState([]);
     const [MINE_POSITIONS, setMINE_POSITIONS] = useState(minePositions);
     const [bet, setBet] = useState(10);
     const [showWinPopup, setShowWinPopup] = useState(false);
-    const [multiplier, setMultiplier] = useState(1);
+    const [multiplier, setMultiplier] = useState(1 + multp);
     const { user } = useAuth();
     const { balance, setBalance, loadBalance } = useBalance();
+
+    useEffect(() => {
+        const audio = new Audio('/main.mp3');
+        audio.loop = true; // Loop the sound
+        audio.play().catch((err) => {
+            console.error("Autoplay failed:", err);
+        });
+
+        return () => {
+            audio.pause();
+            audio.currentTime = 0; // Reset if needed
+        };
+    }, []);
 
     const startGame = () => {
         if (balance < bet) {
@@ -39,7 +53,7 @@ function Mines() {
                 setGameState('playing');
                 setRevealedTiles([]);
                 setCurrentMines(MINE_POSITIONS.slice(0, mineCount));
-                setMultiplier(1);
+                setMultiplier(1 + multp);
             }).catch(err => console.error('Failed to start game.'));
     };
 
@@ -47,10 +61,20 @@ function Mines() {
         if (revealedTiles.includes(index)) return;
 
         if (currentMines.includes(index)) {
-            const audio = new Audio('/bomb.m4a'); // path relative to /public
-            audio.play().catch((e) => {
-                console.warn('Autoplay failed. User interaction may be required.', e);
-            });
+            const bombAudio = new Audio('/bomb.m4a'); // path relative to /public
+            const loseAudio = new Audio('/lose.wav');
+
+            bombAudio.play()
+                .then(() => {
+                    bombAudio.onended = () => {
+                        loseAudio.play().catch((e) => {
+                            console.warn('Lose sound failed:', e);
+                        });
+                    };
+                })
+                .catch((e) => {
+                    console.warn('Fire sound failed:', e);
+                });
             setGameState('lost');
             setTimeout(() => {
                 setShowWinPopup(true)
@@ -61,15 +85,18 @@ function Mines() {
         } else {
             const newRevealed = [...revealedTiles, index];
             setRevealedTiles(newRevealed);
-
             const safeClicks = newRevealed.length;
             const remainingSafe = 25 - mineCount - safeClicks;
-            const newMultiplier = +(1 + safeClicks * 0.2).toFixed(2);
+            const newMultiplier = +(1 + safeClicks * multp).toFixed(2);
             setMultiplier(newMultiplier);
         }
     };
 
     const handleCashOut = () => {
+        const audio = new Audio('/win.wav');
+        audio.play().catch((e) => {
+            console.warn('Playback failed:', e);
+        });
         const winnings = +(bet * multiplier).toFixed(2);
         setBalance(balance + winnings);
         setGameState('won');
@@ -155,10 +182,13 @@ function Mines() {
                         <label className="text-xs text-gray-400 mb-1 text-start">Mines</label>
                         <input
                             type="number"
-                            min={10}
+                            min={3}
                             max={24}
                             value={mineCount}
-                            onChange={(e) => setMineCount(Number(e.target.value))}
+                            onChange={(e) => {
+                                setMineCount(Number(e.target.value))
+                                setMultiplier(parseFloat(1 + multp).toFixed(2))
+                            }}
                             disabled={gameState !== 'setup'}
                             className="w-24 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
                         />

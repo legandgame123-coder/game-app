@@ -29,6 +29,19 @@ export default function AviatorGameScreen() {
   ];
   const [isExpanded, setIsExpanded] = useState(false);
 
+  useEffect(() => {
+    const audio = new Audio('/main.mp3');
+    audio.loop = true; // Loop the sound
+    audio.play().catch((err) => {
+      console.error("Autoplay failed:", err);
+    });
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0; // Reset if needed
+    };
+  }, []);
+
   const toggleHistory = () => {
     setIsExpanded(prev => !prev);
   };
@@ -327,6 +340,10 @@ export default function AviatorGameScreen() {
       );
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Cash out failed");
+      const audio1 = new Audio('/win.wav');
+      audio1.play().catch((e) => {
+        console.warn('Playback failed:', e);
+      });
       setHasCashedOut(true);
     } catch (error) {
       console.error("Error during cash out:", error.message);
@@ -336,11 +353,11 @@ export default function AviatorGameScreen() {
   const getPotentialWin = () => (bet * multiplier).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-[#0b0e14] text-white">
+    <div className="min-h-screen bg-[#160003] text-white">
       <Header />
-      <div className=" flex mb-2 w-full md:px-12 px-3 items-start">
-        <div className={`overflow-hidden transition-max-height duration-300 ${isExpanded ? 'max-h-[500px]' : 'max-h-[60px]'}`}>
-          <div className="flex flex-wrap gap-2 bg-transparent mt-2 p-4 rounded-md">
+      <div className=" flex mb-2 w-full md:px-12 px-3 gap-2 items-start">
+        <div className={`overflow-y-hidden overflow-x-auto ${isExpanded ? '' : ''}`} style={{ scrollbarWidth: 'none' }}>
+          <div className="flex flex-nowrap gap-2 bg-transparent mt-2 p-4 rounded-md">
             {crashPoints.map((point, index) => (
               <div
                 key={index}
@@ -395,7 +412,7 @@ export default function AviatorGameScreen() {
       <div className="w-full flex justify-center px-3 md:px-6">
         <div className="w-full max-w-6xl mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* stats */}
-          <div className="col-span-2 rounded-2xl border border-white/5 bg-white/5 backdrop-blur p-4 md:p-5 flex items-center justify-between">
+          <div className="col-span-2 rounded-2xl bg-transparent shadow-xs shadow-[#9C1137] p-4 md:p-5 flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="text-2xl md:text-3xl font-extrabold text-green-400">
                 {multiplier.toFixed(2)}x
@@ -411,7 +428,7 @@ export default function AviatorGameScreen() {
           </div>
 
           {/* controls */}
-          <div className="col-span-1 rounded-2xl border border-white/5 bg-white/5 backdrop-blur p-4 md:p-5">
+          <div className="col-span-1 rounded-2xl bg-transparent shadow-xs shadow-[#9C1137] backdrop-blur p-4 md:p-5">
             <div className="flex items-center gap-3">
               <input
                 type="number"
@@ -449,7 +466,7 @@ export default function AviatorGameScreen() {
       </div>
 
       {/* ... your controls & history unchanged ... */}
-      <div className="w-full flex justify-center px-3 md:px-6">
+      <div className="w-full flex justify-center md:px-6">
         <div className="w-full max-w-6xl mt-5">
           <HistorySection
             activeTab={activeTab}

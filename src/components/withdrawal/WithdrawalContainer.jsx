@@ -14,6 +14,10 @@ const WithdrawalContainer = () => {
         {selectedMethod === "INR" && <WithdrawalFormINR />}
         {selectedMethod === "USDT" && <WithdrawalFormUSDT />}
         {selectedMethod === "ETH" && <WithdrawalFormETH />}
+    <p className="my-4 text-center text-gray-400 text-sm underline">Or widthraw with</p>
+      <button className="w-full cursor-pointer bg-gradient-to-b shadow-xs shadow-[#9C1137] from-[#9C1137] via-[#9C1137] to-black text-white py-2 rounded">
+        Withdrawal
+      </button>
       </div>
     </div>
   );

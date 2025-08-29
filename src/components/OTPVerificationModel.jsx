@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { verifyOTP } from '../utils/registerUser';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const OTPVerificationModal = ({ isOpen, onClose, userId, userEmail, onVerificationSuccess }) => {
+const OTPVerificationModal = ({ isOpen, onClose, userId, userEmail, onVerificationSuccess, password }) => {
   const [emailOTP, setEmailOTP] = useState(['', '', '', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState('');
@@ -10,6 +12,8 @@ const OTPVerificationModal = ({ isOpen, onClose, userId, userEmail, onVerificati
 
   const emailInputRefs = useRef([]);
   const smsInputRefs = useRef([]);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (resendCooldown > 0) {
@@ -70,6 +74,10 @@ const OTPVerificationModal = ({ isOpen, onClose, userId, userEmail, onVerificati
       const result = await verifyOTP({
         userId,
         emailOTP: emailOTPString,
+        userEmail,
+        password,
+        login,
+        navigate
       });
 
       onVerificationSuccess(result);
@@ -99,7 +107,7 @@ const OTPVerificationModal = ({ isOpen, onClose, userId, userEmail, onVerificati
           onChange={(e) => handleOTPChange(e.target.value, index, type)}
           onKeyDown={(e) => handleKeyDown(e, index, type)}
           onPaste={(e) => handlePaste(e, type)}
-          className="w-12 h-12 text-center text-xl font-bold bg-gray-800 border-2 border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+          className="md:w-12 md:h-12 h-8 w-8 text-center text-xs md:text-xl font-bold bg-gray-800 border-2 border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
         />
       ))}
     </div>
