@@ -3,21 +3,34 @@ import { getAdminAccessPages } from "../../services/adminAccessPages";
 import { Menu, X } from "lucide-react";
 
 const AdminTabs = ({ selected, onSelect }) => {
-  const [methods, setAccessPages] = useState([]);
+  const [methods, setAccessPages] = useState([
+    "transaction",
+    "games",
+    "withdraw-requests",
+    "admin-management",
+    "deposite",
+    "telegram",
+    "qr-code",
+    "crypto-qr-code",
+    "spinner-prices",
+    "refer-amount",
+  ]);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchAccess = async () => {
-      try {
-        const pages = await getAdminAccessPages();
-        setAccessPages(pages);
-      } catch (error) {
-        // Optional: handle error
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAccess = async () => {
+  //     try {
+  //       const pages = await getAdminAccessPages();
+  //       console.log("pages", pages);
+  //       setAccessPages(pages);
+  //     } catch (error) {
+  //       // Optional: handle error
+  //     }
+  //   };
 
-    fetchAccess();
-  }, []);
+  //   fetchAccess();
+  // }, []);
 
   return (
     <div className="w-full">
@@ -62,12 +75,12 @@ const AdminTabs = ({ selected, onSelect }) => {
       </div>
 
       {/* Desktop Tabs */}
-      <div className="hidden md:flex space-x-4 border-b border-zinc-700 min-w-max px-4 py-2 overflow-x-auto">
+      <div className="flex space-x-4 border-b border-zinc-700 min-w-max px-4 py-2 overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800">
         {methods.map((method, index) => (
           <button
             key={`${method}-${index}`}
             onClick={() => onSelect(method)}
-            className={`whitespace-nowrap py-2 px-4 font-semibold transition ${
+            className={`flex-shrink-0 whitespace-nowrap py-2 px-4 font-semibold transition ${
               selected === method
                 ? "border-b-2 border-white text-white"
                 : "text-zinc-400 hover:text-white"

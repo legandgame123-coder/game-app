@@ -1,4 +1,4 @@
-import BalanceButton from '../BalanceButton';
+import BalanceButton from "../BalanceButton";
 
 const Header = () => {
   return (

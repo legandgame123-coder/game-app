@@ -4,7 +4,7 @@ import { getUserBets } from "../../services/aviatorApi";
 import { History } from "lucide-react";
 import HistorySection from "./HistorySection";
 import Header from "./Header";
-import MovingDotsCircle from "./MovingDotsCircle"
+import MovingDotsCircle from "./MovingDotsCircle";
 
 export default function AviatorGameScreen() {
   const {
@@ -22,15 +22,13 @@ export default function AviatorGameScreen() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?._id;
   const crashPoints = [
-    4.73, 6.18, 2.84, 9.77, 3.92,
-    8.36, 7.12, 2.57, 5.66, 3.24,
-    9.31, 2.05, 6.44, 7.98, 3.68,
-    4.27, 2.91, 8.02, 5.19, 9.83
+    4.73, 6.18, 2.84, 9.77, 3.92, 8.36, 7.12, 2.57, 5.66, 3.24, 9.31, 2.05,
+    6.44, 7.98, 3.68, 4.27, 2.91, 8.02, 5.19, 9.83,
   ];
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    const audio = new Audio('/main.mp3');
+    const audio = new Audio("/main.mp3");
     audio.loop = true; // Loop the sound
     audio.play().catch((err) => {
       console.error("Autoplay failed:", err);
@@ -43,12 +41,12 @@ export default function AviatorGameScreen() {
   }, []);
 
   const toggleHistory = () => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   };
   const getColor = (value) => {
-    if (value <= 3) return 'bg-purple-500';
-    if (value < 7) return 'bg-cyan-500';
-    return 'bg-green-500';
+    if (value <= 3) return "bg-purple-500";
+    if (value < 7) return "bg-cyan-500";
+    return "bg-green-500";
   };
 
   const [bet, setBet] = useState(10);
@@ -162,14 +160,8 @@ export default function AviatorGameScreen() {
       const py = y * sy - (planeSize * sy) / 2;
 
       try {
-        ctx.drawImage(
-          planeImg.current,
-          px,
-          py,
-          planeSize * sx,
-          planeSize * sy
-        );
-      } catch (e) { }
+        ctx.drawImage(planeImg.current, px, py, planeSize * sx, planeSize * sy);
+      } catch (e) {}
 
       if (isRunning) rafRef.current = requestAnimationFrame(render);
     };
@@ -241,7 +233,14 @@ export default function AviatorGameScreen() {
 
     // 🌟 Glowing center with animated color
     const glowRadius = width * 0.7;
-    const glowGradient = ctx.createRadialGradient(0, height, 0, 0, height, glowRadius);
+    const glowGradient = ctx.createRadialGradient(
+      0,
+      height,
+      0,
+      0,
+      height,
+      glowRadius
+    );
     glowGradient.addColorStop(0, glowColor);
     glowGradient.addColorStop(1, "rgba(0,0,0,0)");
 
@@ -251,23 +250,35 @@ export default function AviatorGameScreen() {
     // 🌟 Rays
     const numRays = 20;
     ctx.save();
-    ctx.translate(0, height); // bottom-left corner origin 
+    ctx.translate(0, height); // bottom-left corner origin
     for (let i = 0; i < numRays; i++) {
-      // Spread across 180° (π/2 radians) 
+      // Spread across 180° (π/2 radians)
       const baseAngle = (Math.PI / 2) * (i / (numRays - 1));
-      // Apply rotation but wrap with modulus 
+      // Apply rotation but wrap with modulus
       const angle = (baseAngle + rayRotation) % (Math.PI / 2);
       const rayLength = width * 0.8;
-      // Cyan gradient 
-      const rayGradient = ctx.createLinearGradient(0, 0, Math.cos(angle) * rayLength, -Math.sin(angle) * rayLength);
+      // Cyan gradient
+      const rayGradient = ctx.createLinearGradient(
+        0,
+        0,
+        Math.cos(angle) * rayLength,
+        -Math.sin(angle) * rayLength
+      );
       rayGradient.addColorStop(0, "rgba(255,255,255,0.25)");
       rayGradient.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = rayGradient;
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(angle) * rayLength, -Math.sin(angle) * rayLength - 30);
-      ctx.lineTo(Math.cos(angle) * rayLength, -Math.sin(angle) * rayLength + 30);
-      ctx.closePath(); ctx.fill();
+      ctx.lineTo(
+        Math.cos(angle) * rayLength,
+        -Math.sin(angle) * rayLength - 30
+      );
+      ctx.lineTo(
+        Math.cos(angle) * rayLength,
+        -Math.sin(angle) * rayLength + 30
+      );
+      ctx.closePath();
+      ctx.fill();
     }
     ctx.restore();
 
@@ -340,9 +351,9 @@ export default function AviatorGameScreen() {
       );
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Cash out failed");
-      const audio1 = new Audio('/win.wav');
+      const audio1 = new Audio("/win.wav");
       audio1.play().catch((e) => {
-        console.warn('Playback failed:', e);
+        console.warn("Playback failed:", e);
       });
       setHasCashedOut(true);
     } catch (error) {
@@ -356,12 +367,19 @@ export default function AviatorGameScreen() {
     <div className="min-h-screen bg-[#160003] text-white">
       <Header />
       <div className=" flex mb-2 w-full md:px-12 px-3 gap-2 items-start">
-        <div className={`overflow-y-hidden overflow-x-auto ${isExpanded ? '' : ''}`} style={{ scrollbarWidth: 'none' }}>
+        <div
+          className={`overflow-y-hidden overflow-x-auto ${
+            isExpanded ? "" : ""
+          }`}
+          style={{ scrollbarWidth: "none" }}
+        >
           <div className="flex flex-nowrap gap-2 bg-transparent mt-2 p-4 rounded-md">
             {crashPoints.map((point, index) => (
               <div
                 key={index}
-                className={`px-3 py-1 rounded-2xl font-mono font-semibold shadow-sm ${getColor(point)}`}
+                className={`px-3 py-1 rounded-2xl font-mono font-semibold shadow-sm ${getColor(
+                  point
+                )}`}
               >
                 {point}x
               </div>
