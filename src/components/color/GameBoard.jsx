@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
-import GameHeader from './GameHeader';
-import BettingSection from './BettingSection';
-import HistorySection from './HistorySection';
-import { useSocket } from '../../context/SocketContext.jsx';
-import { placeBet, getGameHistory, getUserBets } from '../../services/colorAPI.js';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useState, useEffect } from "react";
+import GameHeader from "./GameHeader";
+import BettingSection from "./BettingSection";
+import HistorySection from "./HistorySection";
+import { useSocket } from "../../context/SocketContext.jsx";
+import {
+  placeBet,
+  getGameHistory,
+  getUserBets,
+} from "../../services/colorAPI.js";
 
 const GameBoard = () => {
   const { currentRound, timeLeft, lastResult } = useSocket();
@@ -13,14 +16,36 @@ const GameBoard = () => {
   const [multiplier, setMultiplier] = useState(1);
   const [gameHistory, setGameHistory] = useState([]);
   const [userBets, setUserBets] = useState([]);
-  const [activeTab, setActiveTab] = useState('history');
-  const user = JSON.parse(localStorage.getItem("user"))
-  const userId = user._id
+  const [activeTab, setActiveTab] = useState("history");
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupTimer, setPopupTimer] = useState(5); // 5 sec timer
+  const [savedResult, setSavedResult] = useState(null);
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id;
+
+  // ✅ Jab lastResult change ho to data save karo aur popup dikhao
   useEffect(() => {
-    fetchGameHistory();
-    fetchUserBets();
+    if (lastResult) {
+      setSavedResult(lastResult);
+      setShowPopup(true);
+      setPopupTimer(5); // reset timer
+      fetchGameHistory();
+      fetchUserBets();
+    }
   }, [lastResult]);
+
+  // ✅ Popup countdown logic
+  useEffect(() => {
+    let timer;
+    if (showPopup && popupTimer > 0) {
+      timer = setTimeout(() => setPopupTimer(popupTimer - 1), 1000);
+    }
+    if (popupTimer === 0) {
+      setShowPopup(false);
+    }
+    return () => clearTimeout(timer);
+  }, [showPopup, popupTimer]);
 
   const fetchGameHistory = async () => {
     try {
@@ -29,7 +54,7 @@ const GameBoard = () => {
         setGameHistory(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching game history:', error);
+      console.error("Error fetching game history:", error);
     }
   };
 
@@ -40,13 +65,13 @@ const GameBoard = () => {
         setUserBets(response.data.data);
       }
     } catch (error) {
-      console.error('Error fetching game history:', error);
+      console.error("Error fetching user bets:", error);
     }
   };
 
   const handlePlaceBet = async () => {
     if (!selectedBet || !currentRound) {
-      alert('Please select a bet and wait for the next round');
+      alert("Please select a bet and wait for the next round");
       return;
     }
 
@@ -57,27 +82,30 @@ const GameBoard = () => {
         betValue: selectedBet.value,
         amount: betAmount,
         multiplier: multiplier,
-        userId: userId
+        userId: userId,
       };
 
       const response = await placeBet(betData);
       if (response.data.success) {
-        alert('Bet placed successfully!');
+        alert("Bet placed successfully!");
         setSelectedBet(null);
       }
     } catch (error) {
-      console.error('Error placing bet:', error);
-      alert('Failed to place bet');
+      console.error("Error placing bet:", error);
+      alert("Failed to place bet");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-transparent shadow-xl shadow-red-950 min-h-screen">
-      <GameHeader 
-        period={currentRound?.period || '---'}
+    <div className="max-w-md mx-auto bg-[#010125] shadow-xl shadow-red-950 min-h-screen relative">
+      <GameHeader
+        period={currentRound?.period || "---"}
         timeLeft={timeLeft}
+        showPopup={showPopup}
+        savedResult={savedResult}
+        popupTimer={popupTimer}
       />
-      
+
       <BettingSection
         selectedBet={selectedBet}
         setSelectedBet={setSelectedBet}
@@ -96,6 +124,71 @@ const GameBoard = () => {
         lastResult={lastResult}
         userBets={userBets}
       />
+
+      {/* {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-md" />
+
+          <div className="relative bg-[#1e1e2f]/80 rounded-2xl p-8 shadow-2xl text-center w-80 border border-gray-700">
+            <h2 className="text-xl font-bold text-white">🎉 New Result!</h2>
+
+            <div className="mt-6 flex justify-center">
+              <div
+                className={`w-20 h-20 flex items-center justify-center rounded-full text-white text-2xl font-bold shadow-lg
+          ${savedResult?.winningColor === "green" ? "bg-green-500" : ""}
+          ${savedResult?.winningColor === "red" ? "bg-red-500" : ""}
+          ${
+            savedResult?.winningColor === "violet"
+              ? "bg-purple-500"
+              : "bg-gray-500"
+          }`}
+              >
+                {savedResult?.winningNumber ?? "-"}
+              </div>
+            </div>
+
+            <p className="mt-4 text-lg text-gray-300">
+              Size:{" "}
+              <span
+                className={`font-semibold ${
+                  savedResult?.size?.toUpperCase() === "BIG"
+                    ? "text-red-400"
+                    : "text-green-400"
+                }`}
+              >
+                {savedResult?.size?.toUpperCase()}
+              </span>
+            </p>
+
+            <div className="relative mt-6 flex justify-center">
+              <svg className="w-20 h-20 transform -rotate-90">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="35"
+                  stroke="gray"
+                  strokeWidth="6"
+                  fill="transparent"
+                />
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="35"
+                  stroke="yellow"
+                  strokeWidth="6"
+                  fill="transparent"
+                  strokeDasharray={2 * Math.PI * 35}
+                  strokeDashoffset={2 * Math.PI * 35 * (popupTimer / 5)}
+                  className="transition-all duration-1000 ease-linear"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
+                {popupTimer}
+              </span>
+            </div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

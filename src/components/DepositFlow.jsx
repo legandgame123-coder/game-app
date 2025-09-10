@@ -262,7 +262,7 @@ const DepositFlow = () => {
         {/* {amount && renderScanner()} */}
 
         {/* Step 5 - Enter Pay Number */}
-        {amount && (method !== "Crypto" ? renderPayInput() : "")}
+        {amount && (method !== "Crypto" ? renderPayInput() : renderPayInput())}
 
         {/* Final Submit */}
         {amount && payNumber && (

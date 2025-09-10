@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API = `${import.meta.env.VITE_API_URL}/api/v1/refer-amount`;
+const API = `${import.meta.env.VITE_API_URL}/api/v1/telegram-amount`;
 
-const ReferAmount = () => {
-  const [amounts, setAmounts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
+const AddTelegramAmount = () => {
   const [newAmount, setNewAmount] = useState("");
-  // Fetch all refer amounts
+  const [loading, setLoading] = useState(false);
+  // Fetch all telegram amounts
+  const [amounts, setAmounts] = useState([]);
+
   const fetchAmounts = async () => {
     try {
       setLoading(true);
@@ -26,15 +26,12 @@ const ReferAmount = () => {
     fetchAmounts();
   }, []);
 
-  // Add new refer amount
+  // Add new telegram amount
   const handleAddAmount = async () => {
     if (!newAmount.trim()) return;
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/refer-amount`,
-        { amount: newAmount }
-      );
-      const added = res.data.data || res.data; // adjust shape
+      const res = await axios.post(API, { amount: newAmount });
+      const added = res.data.data || res.data; // adjust shape if needed
       setAmounts((prev) => [...prev, added]);
       setNewAmount("");
     } catch (err) {
@@ -42,7 +39,7 @@ const ReferAmount = () => {
     }
   };
 
-  // Delete refer amount
+  // Delete telegram amount
   const handleDeleteAmount = async (id) => {
     try {
       await axios.delete(`${API}/${id}`);
@@ -54,17 +51,17 @@ const ReferAmount = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto text-white">
-      <h1 className="text-2xl font-bold mb-4">Refer Amounts</h1>
+      <h1 className="text-2xl font-bold mb-4">Telegram Amount</h1>
 
       {/* Add New Amount */}
       {amounts.length < 1 ? (
-        <div className="flex flex-wrap  gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <input
             type="number"
-            placeholder="Enter refer amount"
+            placeholder="Enter telegram amount"
             value={newAmount}
             onChange={(e) => setNewAmount(e.target.value)}
-            className="border text-white p-2 flex-1 rounded "
+            className="border text-white p-2 flex-1 rounded bg-gray-900"
           />
           <button
             onClick={handleAddAmount}
@@ -78,7 +75,7 @@ const ReferAmount = () => {
           {loading ? (
             <p>Loading...</p>
           ) : amounts.length < 1 ? (
-            <p>No refer amounts yet.</p>
+            <p>No telegram amounts yet.</p>
           ) : (
             <div className="space-y-4">
               {amounts.map((item) => (
@@ -105,4 +102,4 @@ const ReferAmount = () => {
   );
 };
 
-export default ReferAmount;
+export default AddTelegramAmount;

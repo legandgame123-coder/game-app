@@ -12,12 +12,14 @@ import { Link } from "react-router-dom";
 import BalanceButton from "./BalanceButton";
 import { Wallet, X } from "lucide-react";
 import { ReferEarn } from "./ReferEarn";
-
+import { HelpAndSupport } from "./HelpAndSupport";
+import logogame from "../assets/logogame.jpg";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const [games, setGames] = useState([]);
   const [isReferOpen, setIsReferOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/visible-games`)
@@ -55,7 +57,13 @@ const Navbar = () => {
   return (
     <nav className="bg-transparent w-full py-3 ">
       <div className="text-white flex justify-between items-center px-6 md:px-20">
-        <div className="">LOGO</div>
+        <div className="flex items-center">
+        <img
+          src={logogame}
+          alt="Logo"
+          className="h-10 w-auto object-contain" // 👈 size control
+        />
+      </div>
         {isAuthenticated ? (
           <div className="flex items-center gap-4">
             <BalanceButton />
@@ -87,7 +95,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <Menu as="div" className="relative ml-3">
               <div>
-                <MenuButton className="relative h-10 w-10 flex justify-center items-center rounded-full bg-transparent text-amber-200 text-xl font-medium z-50 shadow-xs shadow-[#9C1137]">
+                <MenuButton className="relative cursor-pointer h-10 w-10 flex justify-center items-center rounded-full bg-transparent text-amber-200 text-xl font-medium z-50 shadow-xs shadow-[#9C1137]">
                   {user.fullName[0]}
                 </MenuButton>
               </div>
@@ -109,6 +117,7 @@ const Navbar = () => {
                       {user._id[user._id.length - 2]}
                     </p>
                   </span>
+
                   {user?.role === "admin" && (
                     <MenuItem>
                       <a
@@ -119,6 +128,7 @@ const Navbar = () => {
                       </a>
                     </MenuItem>
                   )}
+
                   <a
                     href="/change-password"
                     className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none cursor-pointer"
@@ -172,18 +182,28 @@ const Navbar = () => {
                     Ranking
                   </a>
 
-                  <a
+                  {/* <a
                     href="/"
                     className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none cursor-pointer"
                   >
                     Notification
-                  </a>
+                  </a> */}
+
                   <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsHelpOpen(true);
+                    }}
                     href="/"
                     className="block px-4 py-2 text-sm hover:shadow-xs shadow-red-500 focus:outline-none cursor-pointer"
                   >
                     Help & Support
                   </a>
+
+                  <HelpAndSupport
+                    isOpen={isHelpOpen}
+                    onClose={() => setIsHelpOpen(false)}
+                  />
 
                   <a
                     onClick={(e) => {

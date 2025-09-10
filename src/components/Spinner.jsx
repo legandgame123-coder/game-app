@@ -1,178 +1,3 @@
-// import axios from "axios";
-// import React, { useState, useRef, useEffect } from "react";
-
-// const API = `${import.meta.env.VITE_API_URL}/api/v1/spinner`;
-
-// const Spinner = () => {
-//   const [isSpinning, setIsSpinning] = useState(false);
-//   const [resultMessage, setResultMessage] = useState("");
-//   const [rotation, setRotation] = useState(0);
-//   const canvasRef = useRef(null);
-
-//   const [prizes, setPrizes] = useState([]);
-
-//   console.log("prizes", prizes);
-//   const fetchPrizes = async () => {
-//     try {
-//       const res = await axios.get(`${API}/prizes`);
-//       setPrizes(res.data[0]?.prizes);
-//       console.log(res.data);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPrizes();
-//   }, []);
-
-//   // const prizes = [
-//   //   "$500",
-//   //   "$100",
-//   //   "LOSE",
-//   //   "$200",
-//   //   "$5000",
-//   //   "JACKPOT",
-//   //   "$50",
-//   //   "$1000",
-//   // ];
-
-//   const radius = 150;
-//   const segmentAngle = 360 / prizes.length; // Each segment is 45 degrees
-
-//   // Get a random final rotation for the wheel to stop
-//   const getRandomRotation = () => {
-//     return Math.floor(Math.random() * 360) + 3600; // Random rotation, at least 10 full spins
-//   };
-
-//   // Determine the winning segment based on the final rotation
-//   const getWinningSegment = (rotation) => {
-//     const segmentIndex = Math.floor((rotation % 360) / segmentAngle);
-//     return prizes[segmentIndex];
-//   };
-
-//   // Draw spinner and text using Canvas
-//   const drawSpinner = (rotation) => {
-//     const canvas = canvasRef.current;
-//     const ctx = canvas.getContext("2d");
-//     const centerX = canvas.width / 2;
-//     const centerY = canvas.height / 2;
-
-//     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-
-//     // Set up the rotation of the spinner
-//     ctx.save();
-//     ctx.translate(centerX, centerY); // Move the context to the center of the canvas
-//     ctx.rotate((rotation * Math.PI) / 180); // Rotate by the current degree
-
-//     // Draw the segments
-//     for (let i = 0; i < prizes?.length; i++) {
-//       const angleStart = i * segmentAngle;
-//       const angleEnd = angleStart + segmentAngle;
-//       ctx.beginPath();
-//       ctx.moveTo(0, 0); // Start from the center
-//       ctx.arc(
-//         0,
-//         0,
-//         radius,
-//         (angleStart * Math.PI) / 180,
-//         (angleEnd * Math.PI) / 180
-//       ); // Draw the segment
-//       ctx.lineTo(0, 0); // Back to center
-//       ctx.fillStyle = i % 2 === 0 ? "#FF5733" : "#FFC300"; // Alternate colors
-//       ctx.fill();
-
-//       // Draw the text in the segment
-//       ctx.save();
-//       ctx.rotate(((angleStart + angleEnd) / 2) * (Math.PI / 180)); // Rotate to the center of the segment
-//       ctx.textAlign = "center";
-//       ctx.textBaseline = "middle";
-//       ctx.font = "bold 16px Arial";
-//       ctx.fillStyle = "white";
-//       ctx.fillText(prizes[i], radius / 2, 0); // Draw text at the center of the segment
-//       ctx.restore();
-//     }
-
-//     ctx.restore(); // Restore the rotation
-//   };
-
-//   // Spin animation logic
-//   const spinWheel = () => {
-//     if (isSpinning) return;
-
-//     setIsSpinning(true);
-
-//     const randomFinalRotation = getRandomRotation(); // Get random final rotation
-//     let currentRotation = rotation;
-//     let currentSpeed = 30; // Initial speed
-//     let startTime = null;
-
-//     // Animation function
-//     const animate = (timestamp) => {
-//       if (!startTime) startTime = timestamp; // Capture start time
-
-//       // Calculate time elapsed
-//       const elapsed = timestamp - startTime;
-//       currentRotation += currentSpeed;
-//       setRotation(currentRotation);
-
-//       // Gradually reduce speed to simulate the slowing down
-//       if (elapsed < 2000) {
-//         // Spin for exactly 2 seconds
-//         if (currentSpeed > 5) {
-//           currentSpeed -= 0.5; // Slow down the speed gradually
-//         }
-//         requestAnimationFrame(animate); // Continue the animation
-//       } else {
-//         // Stop the animation after 2 seconds and determine the winner
-//         const prize = getWinningSegment(currentRotation);
-//         setResultMessage(`You won: ${prize}`);
-//         setIsSpinning(false); // End the spinning
-//       }
-//     };
-
-//     requestAnimationFrame(animate); // Start the animation
-//   };
-
-//   useEffect(() => {
-//     drawSpinner(rotation); // Redraw the spinner each time the rotation changes
-//   }, [rotation]);
-
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white">
-//       <p className="mb-4 text-lg font-semibold">
-//         {isSpinning ? "Spinning..." : "Click to Spin"}
-//       </p>
-
-//       {/* Spinner Canvas */}
-//       <canvas
-//         ref={canvasRef}
-//         width={300}
-//         height={300}
-//         className="border-8 border-white rounded-full"
-//       />
-
-//       {/* Spin Button */}
-//       <button
-//         onClick={spinWheel}
-//         disabled={isSpinning}
-//         className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-md disabled:bg-gray-500 hover:bg-blue-700 transition-colors"
-//       >
-//         Spin
-//       </button>
-
-//       {/* Result Message */}
-//       {resultMessage && (
-//         <p className="mt-6 text-xl font-semibold text-yellow-400">
-//           {resultMessage}
-//         </p>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Spinner;
-
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
 
@@ -182,6 +7,7 @@ const Spinner = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
   const [rotation, setRotation] = useState(0);
+  const [cooldownMessage, setCooldownMessage] = useState("");
   const canvasRef = useRef(null);
   const [prizes, setPrizes] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -201,12 +27,9 @@ const Spinner = () => {
   const updateWithdrawalStatus = async (amount) => {
     try {
       const response = await axios.put(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/wallet/update-deposite-transaction-status`,
+        `${import.meta.env.VITE_API_URL}/api/v1/wallet/update-deposite-transaction-status`,
         {
           status: "approved",
-          // id: "transactionId",
           userId: userId,
           amount: parseInt(amount),
         }
@@ -227,10 +50,9 @@ const Spinner = () => {
       console.error("Error updating status:", error);
     }
   };
+
   useEffect(() => {
     fetchPrizes();
-
-    // updateWithdrawalStatus(amount = "");
   }, []);
 
   const radius = 150;
@@ -238,14 +60,21 @@ const Spinner = () => {
   // ✅ Calculate dynamic segment angle
   const segmentAngle = prizes.length ? 360 / prizes.length : 360;
 
-  const getRandomRotation = () => Math.floor(Math.random() * 360) + 3600;
+  const getRandomRotation = () =>
+    Math.floor(Math.random() * 360) + 3600; // 10+ spins
 
+  // ✅ FIXED Winning Segment with pointer on top
   const getWinningSegment = (rotation) => {
     if (!prizes.length) return null;
-    const normalizedRotation = rotation % 360; // Normalize to 0-359
+    const normalizedRotation = rotation % 360;
+
+    // By default canvas 0° = right (3 o’clock), but pointer is at top (12 o’clock)
+    const adjustedRotation = (normalizedRotation + 90) % 360;
+
     const index =
-      Math.floor((360 - normalizedRotation) / segmentAngle) % prizes.length;
-    return prizes[index];
+      Math.floor(adjustedRotation / segmentAngle) % prizes.length;
+
+    return prizes[prizes.length - 1 - index];
   };
 
   const drawSpinner = (rotation) => {
@@ -296,6 +125,16 @@ const Spinner = () => {
   const spinWheel = () => {
     if (isSpinning || !prizes.length) return;
 
+    // ✅ Check cooldown
+    const lastSpin = localStorage.getItem("lastSpinTime");
+    const now = Date.now();
+    if (lastSpin && now - lastSpin < 3600000) {
+      return; // still in cooldown
+    }
+
+    // ✅ Save new spin time
+    localStorage.setItem("lastSpinTime", now);
+
     setIsSpinning(true);
     const finalRotation = getRandomRotation();
     let currentRotation = rotation;
@@ -311,12 +150,11 @@ const Spinner = () => {
 
       // Slow down gradually
       if (elapsed < 4000) {
-        if (speed > 0.5) speed *= 0.97; // Deceleration
+        if (speed > 0.5) speed *= 0.97;
         requestAnimationFrame(animate);
       } else {
         const prize = getWinningSegment(currentRotation);
 
-        console.log(prize);
         if (prize && prize !== "LOSE") {
           updateWithdrawalStatus(prize);
         }
@@ -328,31 +166,75 @@ const Spinner = () => {
     requestAnimationFrame(animate);
   };
 
+  // ✅ Check cooldown on load and update message every second
+  useEffect(() => {
+    const checkCooldown = () => {
+      const lastSpin = localStorage.getItem("lastSpinTime");
+      if (lastSpin) {
+        const now = Date.now();
+        const diff = now - lastSpin;
+        if (diff < 3600000) {
+          const remaining = 3600000 - diff;
+          const minutes = Math.floor(remaining / 60000);
+          const seconds = Math.floor((remaining % 60000) / 1000);
+          setCooldownMessage(
+            `You can spin again in ${minutes}m ${seconds}s`
+          );
+          return;
+        }
+      }
+      setCooldownMessage("");
+    };
+
+    checkCooldown();
+    const interval = setInterval(checkCooldown, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     drawSpinner(rotation);
   }, [rotation, prizes]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white relative">
       <p className="mb-4 text-lg font-semibold">
         {isSpinning ? "Spinning..." : "Click to Spin"}
       </p>
 
-      <canvas
-        ref={canvasRef}
-        width={300}
-        height={300}
-        className="border-8 border-white rounded-full"
-      />
+      {/* Spinner with pointer */}
+      <div className="relative">
+        {/* Canvas wheel */}
+        <canvas
+          ref={canvasRef}
+          width={300}
+          height={300}
+          className="border-8 border-white rounded-full"
+        />
 
+        {/* Pointer (fixed at top center, downward facing blue triangle) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[165px]">
+          <div
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: "15px solid transparent",
+              borderRight: "15px solid transparent",
+              borderTop: "30px solid #3B82F6", // 🔵 royal blue pointer
+            }}
+          ></div>
+        </div>
+      </div>
+
+      {/* Spin Button */}
       <button
         onClick={spinWheel}
-        disabled={isSpinning || !prizes.length}
+        disabled={isSpinning || !prizes.length || cooldownMessage}
         className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-md disabled:bg-gray-500 hover:bg-blue-700 transition-colors"
       >
-        Spin
+        {cooldownMessage ? cooldownMessage : "Spin"}
       </button>
 
+      {/* Result Message */}
       {resultMessage && (
         <p className="mt-6 text-xl font-bold text-yellow-400">
           {resultMessage}

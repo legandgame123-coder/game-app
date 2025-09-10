@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAdminAccessPages } from "../../services/adminAccessPages";
 import { Menu, X } from "lucide-react";
 
 const AdminTabs = ({ selected, onSelect }) => {
   const [methods, setAccessPages] = useState([
-    "transaction",
-    "games",
-    "withdraw-requests",
-    "admin-management",
-    "deposite",
-    "telegram",
-    "qr-code",
-    "crypto-qr-code",
-    "spinner-prices",
-    "refer-amount",
+    "All Users",
+    "Transaction",
+    "Games",
+    "Withdrawals",
+    "Admin Controller",
+    "Deposite",
+    "Telegram Deposite",
+    "Telegram",
+    "QRCode",
+    "QRCode Crypto",
+    "Spinner Prices",
+    "Refer Amount",
+    "Notification",
   ]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,6 +34,20 @@ const AdminTabs = ({ selected, onSelect }) => {
 
   //   fetchAccess();
   // }, []);
+  const containerRef = useRef(null);
+  const buttonRefs = useRef([]);
+
+  // auto-scroll selected into center
+  useEffect(() => {
+    const idx = methods.indexOf(selected);
+    const btn = buttonRefs.current[idx];
+    const container = containerRef.current;
+    if (!btn || !container) return;
+
+    // center the button in the container
+    const left = btn.offsetLeft - (container.clientWidth - btn.clientWidth) / 2;
+    container.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [selected, methods]);
 
   return (
     <div className="w-full">
@@ -75,20 +92,28 @@ const AdminTabs = ({ selected, onSelect }) => {
       </div>
 
       {/* Desktop Tabs */}
-      <div className="flex space-x-4 border-b border-zinc-700 min-w-max px-4 py-2 overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800">
-        {methods.map((method, index) => (
-          <button
-            key={`${method}-${index}`}
-            onClick={() => onSelect(method)}
-            className={`flex-shrink-0 whitespace-nowrap py-2 px-4 font-semibold transition ${
-              selected === method
-                ? "border-b-2 border-white text-white"
-                : "text-zinc-400 hover:text-white"
-            }`}
-          >
-            {method}
-          </button>
-        ))}
+      <div
+        ref={containerRef}
+        className="w-full overflow-x-auto scroll-smooth "
+        // keep -mx-4 only if you want the inner padding to visually align with page edges
+      >
+        {/* inner = actual row that grows (min-w-max here) */}
+        <div className="md:flex hidden items-center space-x-4 min-w-max px-4 py-2 border-b border-zinc-700">
+          {methods.map((method, i) => (
+            <button
+              key={`${method}-${i}`}
+              ref={(el) => (buttonRefs.current[i] = el)}
+              onClick={() => onSelect(method)}
+              className={`flex-shrink-0 whitespace-nowrap py-2 px-4 font-semibold transition ${
+                selected === method
+                  ? "border-b-2 border-white text-white"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              {method}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

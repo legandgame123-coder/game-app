@@ -26,6 +26,7 @@ import GameBets from "./components/admin/GameBets";
 import RankingPage from "./components/RankingPage";
 import QRCode from "./components/admin/QRCode";
 import { ReferEarn } from "./components/ReferEarn";
+import ProfilePage from "./components/withdrawal/ProfilePage";
 
 const App = () => {
   useEffect(() => {
@@ -77,6 +78,7 @@ const App = () => {
                 />
                 <Route path="/bets" element={<GameBets userId={userId} />} />
                 <Route path="/ranking" element={<RankingPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 {/* //private routes */}
                 <Route
                   path="/withdraw"

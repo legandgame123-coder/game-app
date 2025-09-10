@@ -12,7 +12,8 @@ import QRCode from "../components/admin/QRCode";
 import AddSpinnerPrizes from "../components/admin/AddSpinnerPrices";
 import QRCodeCrypto from "../components/admin/QRCodeCrypto";
 import ReferAmount from "../components/admin/ReferAmount";
-
+import AdminForm from "../components/admin/addNotification";
+import AddTelegramAmount from "../components/admin/AddTelegramAmount";
 const Admin = () => {
   const [selectField, setSelectField] = useState("transaction");
   const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -29,16 +30,19 @@ const Admin = () => {
     <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex flex-col items-center">
       <AdminTabs selected={selectField} onSelect={setSelectField} />
       <div className="">
-        {selectField === "transaction" && <TransactionHistory />}
-        {selectField === "deposite" && <Deposite />}
-        {selectField === "games" && <Games />}
-        {selectField === "withdraw-requests" && <Withdrawals />}
-        {selectField === "admin-management" && <AdminController />}
-        {selectField === "telegram" && <Telegram />}
-        {selectField === "spinner-prices" && <AddSpinnerPrizes />}
-        {selectField === "qr-code" && <QRCode />}
-        {selectField === "crypto-qr-code" && <QRCodeCrypto />}
-        {selectField === "refer-amount" && <ReferAmount />}
+        {selectField === "All Users" && <AllUsers />}
+        {selectField === "Transaction" && <TransactionHistory />}
+        {selectField === "Deposite" && <Deposite />}
+        {selectField === "Telegram Deposite" && <AddTelegramAmount />}
+        {selectField === "Games" && <Games />}
+        {selectField === "Withdrawals" && <Withdrawals />}
+        {selectField === "Admin Controller" && <AdminController />}
+        {selectField === "Telegram" && <Telegram />}
+        {selectField === "Spinner Prices" && <AddSpinnerPrizes />}
+        {selectField === "QRCode" && <QRCode />}
+        {selectField === "QRCode Crypto" && <QRCodeCrypto />}
+        {selectField === "Refer Amount" && <ReferAmount />}
+        {selectField === "Notification" && <AdminForm />}
       </div>
     </div>
   );

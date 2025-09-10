@@ -9,4 +9,5 @@ const api = axios.create({
 
 export const getUserBets = (userId, limit = 50) => api.get(`/api/v1/aviator/user/${userId}/bets?limit=${limit}`);
 
+export const getAllBets = (limit = 50) => api.get(`/api/v1/aviator/all-bets?limit=${limit}`);
 export default api;

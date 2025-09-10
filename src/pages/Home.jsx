@@ -6,10 +6,11 @@ import Slider from "../components/Slider";
 import Button from "../components/Button";
 import BottomBar from "../components/BottomBar";
 import TelegramMenu from "../components/TelegramMenu";
+import AboutDialog from "./notificationDiloag";
 
 const Home = () => {
   const [games, setGames] = useState([]);
-
+  console.log(games);
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/visible-games`)
       .then((response) => response.json())
@@ -51,15 +52,17 @@ const Home = () => {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden bg-[#160003] pb-12">
+      <AboutDialog />
+      <div className="fixed md:top-1/2 top-1/3 -translate-y-1/2 right-5">
+        <TelegramMenu />
+      </div>
       <span className="">
-        <Navbar />{" "}
+        <Navbar />
       </span>
       <div className="border fixed left-0 bottom-0 z-20">
         <BottomBar />
       </div>
-      <div className="absolute top-1/2 right-[1rem]">
-        <TelegramMenu />
-      </div>
+
       <div className="md:flex hidden flex-col">
         <div className="py-4 flex gap-4 text-white md:flex-row flex-col-reverse items-center px-4 md:px-24">
           <div className="text-center flex gap-2">
@@ -137,38 +140,7 @@ const Home = () => {
             );
           })}
 
-          {games.map((gameKey) => {
-            const info = gameInfo[gameKey];
-            if (!info) return null; // Skip if game not in predefined object
-
-            return (
-              <Link
-                to={"/deposite"}
-                key={gameKey}
-                className="p-1 px-2 shadow-xs shadow-[#e9d5a6] bg-gradient-to-tr from-[#9C1137] rounded to-black justify-between flex gap-4 w-full md:w-62 items-center"
-              >
-                <img
-                  src={info.image}
-                  alt={info.displayName}
-                  className="w-10 h-10 rounded bg-contain"
-                  style={{ objectFit: "cover", objectPosition: "center" }}
-                />
-
-                <h3 className="text-gray-200 pl-2 flex flex-col items-start w-full">
-                  <p className="font-medium text-amber-200">
-                    {info.displayName}
-                  </p>
-                  <p className="text-sm text-wrap">{info.displayMsg}</p>
-                </h3>
-                <span className="p-2 rounded bg-gradient-to-b from-[#9C1137] via-[#9C1137]  to-black">
-                  <img
-                    src="/play-button-arrowhead.png"
-                    className="invert-100 h-3"
-                  />
-                </span>
-              </Link>
-            );
-          })}
+          { /* Additional content can go here */ }
         </div>
       </div>
     </div>
