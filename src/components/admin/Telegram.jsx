@@ -6,8 +6,8 @@ const Telegram = () => {
   const [selectField, setSelectField] = useState("games");
 
   return (
-    <div className="min-h-screen flex flex-col w-full p-8 items-center">
-      <div className="mb-6 flex gap-4">
+    <div className="min-h-screen flex flex-col w-full  items-center">
+      <div className="mb-6 pt-6 flex gap-4">
         <button
           className={`px-4 py-2 rounded ${
             selectField === "games"
@@ -30,7 +30,7 @@ const Telegram = () => {
         </button>
       </div>
 
-      <div className="w-full max-w-4xl">
+      <div className="w-full ">
         {selectField === "games" && <GameRoundsTable />}
         {selectField === "deposite" && <Deposite />}
       </div>

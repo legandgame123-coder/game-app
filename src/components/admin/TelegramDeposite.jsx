@@ -89,7 +89,7 @@ const Deposite = () => {
   };
 
   return (
-    <div className="md:min-w-4xl w-auto mx-auto px-4 py-10">
+    <div className="md:min-w-l w-auto mx-auto px-4 py-10">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-200">
         Telegram Subscriptions
       </h2>

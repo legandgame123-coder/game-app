@@ -83,21 +83,22 @@ const AdminController = () => {
   };
 
   return (
-    <div className="text-gray-200 px-6 py-4">
-      <h2 className="text-2xl font-bold mb-4">Admin Controller</h2>
+    <div className="text-gray-200  py-4">
+      <h2 className="text-2xl font-bold mb-4 mx-5">Admin Controller</h2>
 
       <button
         onClick={() => setShowModal(true)}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        className="bg-blue-600 mx-5 hover:bg-blue-700 text-white px-4 py-2 rounded"
       >
         ➕ Add New Admin
       </button>
 
       <AdminTable />
+
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed  inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#2c2c3c] text-white p-6 rounded shadow-md w-full max-w-lg">
-            <h3 className="text-xl font-bold mb-4">Add New Admin</h3>
+            <h3 className="text-xl font-bold mb-4 ">Add New Admin</h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <input

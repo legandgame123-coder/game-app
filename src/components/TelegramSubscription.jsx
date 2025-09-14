@@ -19,14 +19,16 @@ const TelegramSubscription = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user._id;
   // Fetch all telegram amounts
-
+  console.log("amount", amount);
   const [teleAmount, setAmounts] = useState([]);
+
   const fetchAmounts = async () => {
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/telegram-amount`
       );
       setAmounts(res.data.data || res.data || []);
+      setAmount(res.data[0]?.amount || 0);
     } catch (err) {
       console.log("Fetch error:", err);
     }
@@ -48,7 +50,6 @@ const TelegramSubscription = () => {
         `${import.meta.env.VITE_API_URL}/api/v1/qrcode/qr-codes`
       );
       const data = await res.json();
-      console.log("data", data);
       if (data.success) setQrCodes(data.data);
     } catch (err) {
       console.error("Failed to fetch QR Codes", err);

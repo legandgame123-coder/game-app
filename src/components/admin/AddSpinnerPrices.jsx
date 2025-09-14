@@ -86,7 +86,7 @@ const AddSpinnerPrizes = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto text-white">
+    <div className="p-6  mx-auto text-white">
       <h1 className="text-2xl font-bold mb-4">Spinner Prizes</h1>
 
       {prizesDocs.length < 1 ? (
@@ -98,6 +98,7 @@ const AddSpinnerPrizes = () => {
             onChange={(e) => setNewPrizes(e.target.value)}
             className="border p-2 flex-1 rounded"
           />
+
           <button
             onClick={handleAddPrizes}
             className="bg-blue-600 text-white px-4 py-2 rounded"
@@ -111,7 +112,7 @@ const AddSpinnerPrizes = () => {
           {prizesDocs.map((doc) => (
             <div
               key={doc._id}
-              className="border p-4 rounded shadow flex flex-col gap-2"
+              className="border p-2 rounded shadow flex flex-col gap-2"
             >
               {/* <h2 className="font-semibold">Document ID: {doc._id.slice(-6)}</h2> */}
 

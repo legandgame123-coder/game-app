@@ -76,23 +76,30 @@ const AdminTable = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4 text-white">Existing Admins</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-800 text-white rounded">
+    <div className=" w-full ">
+      <h2 className="text-xl font-bold  text-white p-5">Existing Admins</h2>
+      <div className="overflow-auto max-w-screen">
+        <table className="min-w-full mx-5 border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-gray-700">
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Email</th>
-              <th className="p-2 text-left">Phone</th>
-              <th className="p-2 text-left">Access Pages</th>
-              <th className="p-2 text-center">Actions</th>
+            <tr className="bg-gray-200 text-black">
+              <th className="border border-gray-300 p-2 text-left">Name</th>
+              <th className="border border-gray-300 p-2 text-left">Email</th>
+              <th className="border border-gray-300 p-2 text-left">Phone</th>
+              <th className="border border-gray-300 p-2 text-left min-w-md">
+                Access Pages
+              </th>
+              <th className="border border-gray-300 p-2 text-center">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {admins.map((admin, index) => (
-              <tr key={admin._id} className="border-t border-gray-600">
-                <td className="p-2">
+              <tr
+                key={admin._id}
+                className="hover:bg-gray-100 hover:text-black cursor-pointer"
+              >
+                <td className="border border-gray-300 p-2">
                   {editIndex === index ? (
                     <input
                       type="text"
@@ -103,13 +110,13 @@ const AdminTable = () => {
                           fullName: e.target.value,
                         })
                       }
-                      className="bg-gray-900 text-white p-1 rounded w-full"
+                      className="border p-1 rounded w-full"
                     />
                   ) : (
                     admin.fullName
                   )}
                 </td>
-                <td className="p-2">
+                <td className="border border-gray-300 p-2">
                   {editIndex === index ? (
                     <input
                       type="email"
@@ -120,13 +127,13 @@ const AdminTable = () => {
                           email: e.target.value,
                         })
                       }
-                      className="bg-gray-900 text-white p-1 rounded w-full"
+                      className="border p-1 rounded w-full"
                     />
                   ) : (
                     admin.email
                   )}
                 </td>
-                <td className="p-2">
+                <td className="border border-gray-300 p-2">
                   {editIndex === index ? (
                     <input
                       type="text"
@@ -137,13 +144,13 @@ const AdminTable = () => {
                           phoneNumber: e.target.value,
                         })
                       }
-                      className="bg-gray-900 text-white p-1 rounded w-full"
+                      className="border p-1 rounded w-full"
                     />
                   ) : (
                     admin.phoneNumber
                   )}
                 </td>
-                <td className="p-2">
+                <td className="border border-gray-300 p-2">
                   {editIndex === index ? (
                     <div className="flex flex-wrap gap-2">
                       {ACCESS_OPTIONS.map((page) => {
@@ -156,7 +163,7 @@ const AdminTable = () => {
                             className={`px-3 py-1 rounded text-sm font-medium ${
                               isActive
                                 ? "bg-green-600 text-white"
-                                : "bg-gray-700 text-gray-300"
+                                : "bg-gray-300 text-black"
                             }`}
                             onClick={() => {
                               const currentAccess =
@@ -181,7 +188,7 @@ const AdminTable = () => {
                       {admin.accessPages?.map((page) => (
                         <span
                           key={page}
-                          className="bg-blue-700 text-white px-2 py-1 rounded"
+                          className="bg-blue-600 text-white px-2 py-1 rounded"
                         >
                           {page}
                         </span>
@@ -189,25 +196,25 @@ const AdminTable = () => {
                     </div>
                   )}
                 </td>
-                <td className="p-2 text-center">
+                <td className="border border-gray-300 p-2 text-center">
                   {editIndex === index ? (
                     <button
                       onClick={handleSave}
-                      className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded mr-2"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded mr-2"
                     >
                       Save
                     </button>
                   ) : (
                     <button
                       onClick={() => handleEdit(index)}
-                      className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded mr-2"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2"
                     >
                       Edit
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(admin.email)}
-                    className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
                   >
                     Delete
                   </button>
@@ -216,7 +223,7 @@ const AdminTable = () => {
             ))}
             {admins.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center p-4 text-gray-400">
+                <td colSpan="6" className="text-center p-4 text-gray-500">
                   No admins found.
                 </td>
               </tr>

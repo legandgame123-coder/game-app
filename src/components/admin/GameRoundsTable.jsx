@@ -144,9 +144,10 @@ const GameRoundsTable = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 text-white">
+    <div className=" md:p-6 text-white">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+
+      <div className="flex flex-col pl-5 sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <h2 className="text-lg md:text-xl font-bold">🎮 Game Rounds</h2>
         <button
           onClick={() => setShowModal(true)}
@@ -157,145 +158,145 @@ const GameRoundsTable = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-auto max-w-screen">
-        <div className="overflow-x-auto rounded-lg border border-gray-700">
-          <table className="min-w-full text-sm sm:text-base bg-gray-800 text-white">
-            <thead className="bg-gray-700 text-left">
-              <tr>
-                <th className="p-2">Game Type</th>
-                <th className="p-2">Multipliers</th>
-                <th className="p-2">Start Time</th>
-                <th className="p-2">End Time</th>
-                <th className="p-2">Status</th>
-                <th className="p-2 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rounds.map((round, index) => (
-                <tr key={round._id} className="border-t border-gray-600">
-                  <td className="p-2">
-                    {editIndex === index ? (
-                      <select
-                        value={editedRound.gameType}
-                        onChange={(e) =>
-                          handleInputChange("gameType", e.target.value)
-                        }
-                        className="bg-gray-900 p-1 rounded w-full"
+
+      <div className="overflow-x-auto max-w-screen  ">
+        <table className="min-w-full  mx-5  text-sm sm:text-base bg-gray-800 rounded-lg text-white border border-gray-700">
+          <thead className="bg-gray-700 text-left">
+            <tr>
+              <th className="p-2">Game Type</th>
+              <th className="p-2">Multipliers</th>
+              <th className="p-2">Start Time</th>
+              <th className="p-2">End Time</th>
+              <th className="p-2">Status</th>
+              <th className="p-2 text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {rounds.map((round, index) => (
+              <tr key={round._id} className="border-t border-gray-600">
+                <td className="p-2">
+                  {editIndex === index ? (
+                    <select
+                      value={editedRound.gameType}
+                      onChange={(e) =>
+                        handleInputChange("gameType", e.target.value)
+                      }
+                      className="bg-gray-900 p-1 rounded w-full"
+                    >
+                      {gameOptions.map((game) => (
+                        <option key={game} value={game}>
+                          {game.charAt(0).toUpperCase() + game.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    round.gameType
+                  )}
+                </td>
+                <td className="p-2">
+                  {editIndex === index ? (
+                    <input
+                      value={editedRound.multipliers.join(",")}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "multipliers",
+                          e.target.value.split(",").map(Number)
+                        )
+                      }
+                      className="bg-gray-900 p-1 rounded w-full"
+                    />
+                  ) : (
+                    round.multipliers.join(", ")
+                  )}
+                </td>
+                <td className="p-2">
+                  {editIndex === index ? (
+                    <input
+                      type="datetime-local"
+                      value={new Date(editedRound.startTime)
+                        .toLocaleString("sv-SE", {
+                          timeZone: "Asia/Kolkata",
+                        })
+                        .replace(" ", "T")}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "startTime",
+                          new Date(e.target.value).toISOString()
+                        )
+                      }
+                      className="bg-gray-900 p-1 rounded w-full"
+                    />
+                  ) : (
+                    new Date(round.startTime).toLocaleString()
+                  )}
+                </td>
+                <td className="p-2">
+                  {editIndex === index ? (
+                    <input
+                      type="datetime-local"
+                      value={new Date(editedRound.endTime)
+                        .toLocaleString("sv-SE", {
+                          timeZone: "Asia/Kolkata",
+                        })
+                        .replace(" ", "T")}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "endTime",
+                          new Date(e.target.value).toISOString()
+                        )
+                      }
+                      className="bg-gray-900 p-1 rounded w-full"
+                    />
+                  ) : (
+                    new Date(round.endTime).toLocaleString()
+                  )}
+                </td>
+                <td className="p-2">{round.status}</td>
+                <td className="p-2 text-center">
+                  {editIndex === index ? (
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      <button
+                        onClick={handleSave}
+                        className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
                       >
-                        {gameOptions.map((game) => (
-                          <option key={game} value={game}>
-                            {game.charAt(0).toUpperCase() + game.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      round.gameType
-                    )}
-                  </td>
-                  <td className="p-2">
-                    {editIndex === index ? (
-                      <input
-                        value={editedRound.multipliers.join(",")}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "multipliers",
-                            e.target.value.split(",").map(Number)
-                          )
-                        }
-                        className="bg-gray-900 p-1 rounded w-full"
-                      />
-                    ) : (
-                      round.multipliers.join(", ")
-                    )}
-                  </td>
-                  <td className="p-2">
-                    {editIndex === index ? (
-                      <input
-                        type="datetime-local"
-                        value={new Date(editedRound.startTime)
-                          .toLocaleString("sv-SE", {
-                            timeZone: "Asia/Kolkata",
-                          })
-                          .replace(" ", "T")}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "startTime",
-                            new Date(e.target.value).toISOString()
-                          )
-                        }
-                        className="bg-gray-900 p-1 rounded w-full"
-                      />
-                    ) : (
-                      new Date(round.startTime).toLocaleString()
-                    )}
-                  </td>
-                  <td className="p-2">
-                    {editIndex === index ? (
-                      <input
-                        type="datetime-local"
-                        value={new Date(editedRound.endTime)
-                          .toLocaleString("sv-SE", {
-                            timeZone: "Asia/Kolkata",
-                          })
-                          .replace(" ", "T")}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "endTime",
-                            new Date(e.target.value).toISOString()
-                          )
-                        }
-                        className="bg-gray-900 p-1 rounded w-full"
-                      />
-                    ) : (
-                      new Date(round.endTime).toLocaleString()
-                    )}
-                  </td>
-                  <td className="p-2">{round.status}</td>
-                  <td className="p-2 text-center">
-                    {editIndex === index ? (
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        <button
-                          onClick={handleSave}
-                          className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2 justify-center flex-wrap">
-                        <button
-                          onClick={() => handleEdit(index)}
-                          className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(round._id)}
-                          className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {rounds.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="text-center py-4 text-gray-400">
-                    No game rounds found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      <button
+                        onClick={() => handleEdit(index)}
+                        className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(round._id)}
+                        className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {rounds.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-gray-400">
+                  No game rounds found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* Modal */}

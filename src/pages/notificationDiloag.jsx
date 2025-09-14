@@ -20,7 +20,7 @@ const AboutDialog = () => {
     // ✅ Step 2: Fetch from API
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/notification/get`)
       .then((res) => res.json())
-    .then((data) => {
+      .then((data) => {
         if (data?.message) setMessage(data.message);
         else setOpen(false);
       });
@@ -35,7 +35,7 @@ const AboutDialog = () => {
   if (!message || !open) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 flex !z-30 items-center justify-center bg-black/50">
       <div className="bg-white p-6 rounded-xl shadow-lg w-96">
         <h2 className="text-lg font-bold mb-4">📢 Notification</h2>
         <p className="mb-4">{message}</p>

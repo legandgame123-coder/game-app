@@ -32,7 +32,7 @@ export const ReferEarn = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="relative bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-2xl shadow-2xl w-[600px] p-8 animate-fadeIn">
+      <div className="relative bg-gradient-to-br mx-3 from-white via-gray-50 to-gray-100 rounded-2xl shadow-2xl w-[600px] p-8 animate-fadeIn">
         {/* Close Button (X) */}
         <button
           onClick={onClose}
@@ -50,7 +50,7 @@ export const ReferEarn = ({ isOpen, onClose }) => {
         </p>
 
         {/* Referral Box */}
-        <div className="bg-gray-100 border border-gray-200 rounded-xl p-4 flex items-center justify-between mb-6">
+        <div className="bg-gray-100 border  border-gray-200 rounded-xl p-4 flex items-center justify-between mb-6">
           <input
             type="text"
             readOnly

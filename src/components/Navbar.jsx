@@ -13,7 +13,7 @@ import BalanceButton from "./BalanceButton";
 import { Wallet, X } from "lucide-react";
 import { ReferEarn } from "./ReferEarn";
 import { HelpAndSupport } from "./HelpAndSupport";
-import logogame from "../assets/logogame.jpg";
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
@@ -57,13 +57,7 @@ const Navbar = () => {
   return (
     <nav className="bg-transparent w-full py-3 ">
       <div className="text-white flex justify-between items-center px-6 md:px-20">
-        <div className="flex items-center">
-        <img
-          src={logogame}
-          alt="Logo"
-          className="h-10 w-auto object-contain" // 👈 size control
-        />
-      </div>
+        <div className="">LOGO</div>
         {isAuthenticated ? (
           <div className="flex items-center gap-4">
             <BalanceButton />
@@ -99,7 +93,7 @@ const Navbar = () => {
                   {user.fullName[0]}
                 </MenuButton>
               </div>
-
+              {/* 
               <Transition
                 enter="transition-transform transition-opacity duration-300 ease-out"
                 enterFrom="translate-x-full opacity-0"
@@ -107,6 +101,14 @@ const Navbar = () => {
                 leave="transition-transform transition-opacity duration-300 ease-in"
                 leaveFrom="translate-x-0 opacity-100"
                 leaveTo="translate-x-full opacity-0"
+              > */}
+              <Transition
+                enter="transition-transform transition-opacity duration-300 ease-out"
+                enterFrom="-translate-x-full opacity-0" // start from left
+                enterTo="translate-x-0 opacity-100" // slide in to center
+                leave="transition-transform transition-opacity duration-300 ease-in"
+                leaveFrom="translate-x-0 opacity-100" // start at center
+                leaveTo="-translate-x-full opacity-0" // exit to left
               >
                 <MenuItems className="fixed top-0 left-0 z-100 h-screen overflow-y-auto w-64 md:w-64 sm:w-full transform bg-[#160003] focus:outline-none pt-4">
                   <span className="block px-4 py-2 text-sm cursor-pointer">

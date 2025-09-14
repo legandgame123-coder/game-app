@@ -2,6 +2,7 @@ import { useBalance } from "../context/BalanceContext";
 
 const BalanceButton = () => {
   const { balance } = useBalance();
+  console.log(balance);
   const integerBalance = Math.floor(parseInt(balance, 10));
 
   return (

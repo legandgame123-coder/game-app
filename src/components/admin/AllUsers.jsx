@@ -22,7 +22,7 @@ const AllUsers = () => {
     fullName: "",
     email: "",
     phoneNumber: "",
-    password: "", // For password field
+    password: "",
   });
 
   // Fetch all users from the backend
@@ -32,7 +32,7 @@ const AllUsers = () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/users/`
       );
-      setUsers(response.data.users); // Store all users
+      setUsers(response.data.users);
       setError(null);
     } catch (err) {
       setError("Failed to fetch users");
@@ -49,7 +49,7 @@ const AllUsers = () => {
       fullName: user.fullName,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      password: user.password, // Set password field as empty to indicate no password change yet
+      password: user.password,
     });
   };
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { data } from "react-router-dom";
 
 const API = `${import.meta.env.VITE_API_URL}/my-channels`;
 
@@ -8,75 +7,81 @@ const TelegramApproval = ({ isOpen, onClose, transaction }) => {
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newChannel, setNewChannel] = useState("");
-  const [transactions, setTransactions] = useState([]);
+  const [fetchedOnce, setFetchedOnce] = useState(false);
 
-  console.log("newChannel", newChannel);
-  console.log("res", channels);
+  // ---- Fetch available Telegram channels ----
   const fetchChannels = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await axios.get(API);
-      console.log("res", res.data.channels);
-      setChannels(res.data.channels || []);
+      console.log("Full response:", res.data);
+
+      // handle both { channels:[...] } or { data:{ channels:[...] } }
+      const list =
+        res.data.channels ||
+        (res.data.data && res.data.data.channels) ||
+        [];
+      setChannels(list);
+      setFetchedOnce(true);
     } catch (err) {
       console.error("Fetch error:", err);
+      alert("Failed to fetch channels. Check console for details.");
     } finally {
+      // always turn loader off
       setLoading(false);
     }
   };
 
+  // Fetch only when the modal opens, and only once per page load
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !fetchedOnce) {
       fetchChannels();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchedOnce]);
 
-  const updateWithdrawalStatus = async (
-    transactionId,
-    status,
-    userId,
-    amount,
-    channelId
-  ) => {
+  // ---- Update transaction status ----
+  const updateWithdrawalStatus = async (status) => {
+    if (!transaction?._id) {
+      alert("Transaction data missing.");
+      return;
+    }
+    if (!newChannel) {
+      alert("Please select a channel before continuing.");
+      return;
+    }
+
+    const channelId = parseInt(newChannel, 10);
+    if (isNaN(channelId)) {
+      alert("Invalid channel ID.");
+      return;
+    }
+
     try {
+      console.log("Using API URL:", import.meta.env.VITE_API_URL);
       const response = await axios.put(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/wallet/telegram/update-deposite-transaction-status`,
+        `${import.meta.env.VITE_API_URL}/api/v1/wallet/telegram/update-deposite-transaction-status`,
         {
           status,
-          id: transactionId,
-          userId,
-          amount,
+          id: transaction._id,
+          userId: transaction.userId,
+          amount: transaction.amount,
           channelId,
         }
       );
 
-      console.log("first", response.data);
-
-      if (response.status === 200) {
-        setTransactions((prevTransactions) =>
-          prevTransactions.map((transaction) =>
-            transaction._id === transactionId
-              ? { ...transaction, status }
-              : transaction
-          )
-        );
-
-        alert(response.data.message);
-      } else {
-        console.log("Failed to update status.");
-      }
+      console.log("Update response:", response.data);
+      alert(response.data.message || "Status updated successfully.");
+      onClose(); // close the dialog after successful update
     } catch (error) {
-      alert(error.message);
-      console.log("Error updating status:", error);
+      console.error("Error updating status:", error);
+      alert(error.response?.data?.message || error.message || "Update failed.");
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
       <div className="bg-white text-black rounded p-6 w-full max-w-xl shadow-lg relative">
         <button
           onClick={onClose}
@@ -87,7 +92,9 @@ const TelegramApproval = ({ isOpen, onClose, transaction }) => {
 
         <h1 className="text-2xl font-bold mb-4">Telegram Channels</h1>
 
-        {channels.length > 0 ? (
+        {loading && <p className="mb-4">Loading channels…</p>}
+
+        {!loading && channels.length > 0 ? (
           <div className="mb-6">
             <label htmlFor="channelSelect" className="block mb-2 font-medium">
               Select a Channel:
@@ -107,33 +114,18 @@ const TelegramApproval = ({ isOpen, onClose, transaction }) => {
             </select>
           </div>
         ) : (
-          <p>No channels found.</p>
+          !loading && <p>No channels found.</p>
         )}
+
         <div className="flex mt-2 space-x-4">
           <button
-            onClick={() =>
-              updateWithdrawalStatus(
-                transaction._id,
-                "approved",
-                transaction.userId,
-                transaction.amount,
-                parseInt(newChannel)
-              )
-            }
+            onClick={() => updateWithdrawalStatus("approved")}
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
           >
             Approve
           </button>
           <button
-            onClick={() =>
-              updateWithdrawalStatus(
-                transaction._id,
-                "rejected",
-                transaction.userId,
-                transaction.amount,
-                parseInt(newChannel)
-              )
-            }
+            onClick={() => updateWithdrawalStatus("rejected")}
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
             Reject

@@ -51,7 +51,7 @@ const HistorySection = ({ activeTab, setActiveTab, liveBets, userBets }) => {
               >
                 <div className="text-sm font-medium">
                   {bet.userId[0]}***{bet.userId[length - 1]}
-                  {console.log(bet)}
+                  {/* {console.log(bet)} */}
                 </div>
                 <div className="text-sm font-medium">{bet.betAmount}</div>
                 <div className="text-center">

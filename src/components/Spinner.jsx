@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API = `${import.meta.env.VITE_API_URL}/api/v1/spinner`;
 
@@ -27,7 +28,9 @@ const Spinner = () => {
   const updateWithdrawalStatus = async (amount) => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/v1/wallet/update-deposite-transaction-status`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/v1/wallet/update-deposite-transaction-status`,
         {
           status: "approved",
           userId: userId,
@@ -60,8 +63,7 @@ const Spinner = () => {
   // ✅ Calculate dynamic segment angle
   const segmentAngle = prizes.length ? 360 / prizes.length : 360;
 
-  const getRandomRotation = () =>
-    Math.floor(Math.random() * 360) + 3600; // 10+ spins
+  const getRandomRotation = () => Math.floor(Math.random() * 360) + 3600; // 10+ spins
 
   // ✅ FIXED Winning Segment with pointer on top
   const getWinningSegment = (rotation) => {
@@ -71,8 +73,7 @@ const Spinner = () => {
     // By default canvas 0° = right (3 o’clock), but pointer is at top (12 o’clock)
     const adjustedRotation = (normalizedRotation + 90) % 360;
 
-    const index =
-      Math.floor(adjustedRotation / segmentAngle) % prizes.length;
+    const index = Math.floor(adjustedRotation / segmentAngle) % prizes.length;
 
     return prizes[prizes.length - 1 - index];
   };
@@ -121,7 +122,7 @@ const Spinner = () => {
 
     ctx.restore();
   };
-
+  const navigate = useNavigate();
   const spinWheel = () => {
     if (isSpinning || !prizes.length) return;
 
@@ -158,6 +159,11 @@ const Spinner = () => {
         if (prize && prize !== "LOSE") {
           updateWithdrawalStatus(prize);
         }
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
+
         setResultMessage(`🎉 You won: ${prize}`);
         setIsSpinning(false);
       }
@@ -177,9 +183,7 @@ const Spinner = () => {
           const remaining = 3600000 - diff;
           const minutes = Math.floor(remaining / 60000);
           const seconds = Math.floor((remaining % 60000) / 1000);
-          setCooldownMessage(
-            `You can spin again in ${minutes}m ${seconds}s`
-          );
+          setCooldownMessage(`You can spin again in ${minutes}m ${seconds}s`);
           return;
         }
       }
