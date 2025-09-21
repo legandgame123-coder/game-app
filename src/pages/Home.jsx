@@ -74,11 +74,12 @@ const Home = () => {
                 // className="bg-blue-500  hover:bg-blue-600"
               />
             </Link>
-
-            <Button
-              className="bg-gradient-to-b lg:w-[70%] h-12 w-full from-[#9C1137] via-[#9C1137]  to-black"
-              children="Download Our App"
-            ></Button>
+            <a href="/battelgame.apk" download>
+              <Button
+                className="bg-gradient-to-b lg:w-[70%] h-12 w-full from-[#9C1137] via-[#9C1137]  to-black"
+                children="Download Our App"
+              ></Button>
+            </a>
           </div>
           <Slider />
         </div>
