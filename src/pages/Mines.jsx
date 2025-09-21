@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import BalanceButton from "../components/BalanceButton";
 import { useBalance } from "../context/BalanceContext";
 import WinPopup from "../components/chickenRoad/WinPopup";
+import { toast } from "react-toastify";
 
 const minePositions = [
   3, 7, 12, 17, 20, 1, 5, 9, 13, 22, 24, 0, 2, 4, 6, 8, 10, 11, 14, 15, 16, 18,
@@ -40,7 +41,7 @@ function Mines() {
 
   const startGame = () => {
     if (balance < bet) {
-      alert("Insufficient balance!");
+      toast.error("Insufficient balance!");
       return;
     }
 

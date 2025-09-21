@@ -50,13 +50,13 @@ const TelegramMenu = () => {
               }}
               onClick={toggleOptions}
             />
+
             <span className="font-medium">Aviator</span>
           </Link>
           <Link
             to={"/telegram-subscription/mines"}
             className="text-amber-200 flex flex-col items-center"
           >
-            
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
               alt="Telegram"
@@ -64,7 +64,6 @@ const TelegramMenu = () => {
               style={{
                 boxShadow: "0 4px 6px 2px rgba(0,136,204, 0.5)",
               }}
-
               onClick={toggleOptions}
             />
             <span className="font-medium">Mines</span>

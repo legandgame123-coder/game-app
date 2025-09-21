@@ -1,5 +1,5 @@
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode'; // ✅ correct named import
+import { jwtDecode } from "jwt-decode"; // ✅ correct named import
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -37,11 +37,14 @@ function isTokenExpired(token) {
 // Refresh Function
 async function refreshAccessToken() {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/refresh-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/v1/users/refresh-token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      }
+    );
 
     const data = await response.json();
     const { accessToken } = data.data;

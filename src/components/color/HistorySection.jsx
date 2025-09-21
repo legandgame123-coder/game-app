@@ -8,6 +8,8 @@ const HistorySection = ({
   lastResult,
   userBets,
 }) => {
+  console.log("gameHistory", gameHistory.slice(40));
+  console.log("lastResult", lastResult);
   // console.log('activeTab, setActiveTab, gameHistory, lastResult, userBets', activeTab, setActiveTab, gameHistory, lastResult, userBets);
   const tabs = [
     { id: "history", label: "Game History" },

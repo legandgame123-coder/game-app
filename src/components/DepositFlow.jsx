@@ -105,6 +105,9 @@ const DepositFlow = () => {
         placeholder={`Enter amount in ${getCurrencySymbol()}`}
         className="shadow-[#9C1137] shadow-xs px-4 py-2 rounded-md w-full text-white outline-none"
       />
+      {/* <div className="bg-[#9C1137] flex item shadow-xs px-4 py-2 rounded-md w-full text-white outline-none">
+        {amount}
+      </div> */}
       <div className="grid grid-cols-4 gap-3 mt-3">
         {quickAmounts.map((amt) => (
           <button

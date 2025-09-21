@@ -1,6 +1,7 @@
 import axios from "axios"; // make sure this is at the top
 import React, { useState } from "react";
 import AdminTable from "./AdminTable";
+import { toast } from "react-toastify";
 
 const ACCESS_PAGES = [
   "transaction",
@@ -42,7 +43,7 @@ const AdminController = () => {
     const phoneDigitsOnly = rawPhone.replace(/\D/g, "");
 
     if (phoneDigitsOnly.length !== 10) {
-      alert("❌ Phone number must be exactly 10 digits");
+      toast.error("❌ Phone number must be exactly 10 digits");
       return;
     }
 
@@ -65,7 +66,7 @@ const AdminController = () => {
       );
 
       console.log("✅ Admin added successfully:", res.data);
-      alert("✅ Admin created!");
+      toast.success("✅ Admin created!");
 
       // Clear and close
       setShowModal(false);
@@ -78,7 +79,7 @@ const AdminController = () => {
       });
     } catch (error) {
       console.error("❌ Failed to create admin:", error);
-      alert("❌ Failed to create admin. Check console for details.");
+      toast.error("❌ Failed to create admin. Check console for details.");
     }
   };
 

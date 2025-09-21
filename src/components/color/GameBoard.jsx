@@ -10,6 +10,9 @@ import {
 } from "../../services/colorAPI.js";
 import WinDialog from "./winningDiloagbox.jsx";
 import { useBalance } from "../../context/BalanceContext";
+
+import { toast } from "react-toastify";
+
 import Timer from "../../pages/Timer.jsx";
 
 const GameBoard = () => {
@@ -24,9 +27,9 @@ const GameBoard = () => {
   const [popupTimer, setPopupTimer] = useState(5); // 5 sec timer
   const [savedResult, setSavedResult] = useState(null);
   const { balance, setBalance, loadBalance } = useBalance();
+  const integerBalance = Math.floor(parseInt(balance, 10));
   const [winingLoad, setWiningLoad] = useState(false);
-
-
+  console.log("winingLoad", winingLoad);
   console.log("Time Left", timeLeft);
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -55,7 +58,6 @@ const GameBoard = () => {
     return () => clearTimeout(timer);
   }, [showPopup, popupTimer]);
 
-
   const fetchGameHistory = async () => {
     try {
       const response = await getGameHistory();
@@ -64,7 +66,10 @@ const GameBoard = () => {
         const latest = response.data.data[0];
         const userBet = getAllBets();
         console.log("User Bets:", userBet, "Latest Result:", latest);
-        if (userBet.period === latest.period && userBet.winningNumber === latest.betValue) {
+        if (
+          userBet.period === latest.period &&
+          userBet.winningNumber === latest.betValue
+        ) {
           setWiningLoad(true);
         }
       }
@@ -93,21 +98,20 @@ const GameBoard = () => {
 
     // Example: same period aane par update karna
     const updated = [...existing];
-    const index = updated.findIndex(item => item.period === newBet.period);
+    const index = updated.findIndex((item) => item.period === newBet.period);
 
     if (index >= 0) {
       updated[index] = newBet; // update if same period
     } else {
-      updated.push(newBet);    // else add new
+      updated.push(newBet); // else add new
     }
 
     localStorage.setItem("betBox", JSON.stringify(updated));
   }
 
-
   const handlePlaceBet = async () => {
     if (!selectedBet || !currentRound) {
-      alert("Please select a bet and wait for the next round");
+      toast("Please select a bet and wait for the next round");
       return;
     }
 
@@ -125,20 +129,23 @@ const GameBoard = () => {
       console.log("Bet Response:", response);
       if (response.data.success) {
         saveBetData(betData);
-        alert("Bet placed successfully!");
-        setBalance(prev => prev - betAmount);
+        toast.success("Bet placed successfully!");
+        setBalance((prev) => prev - betAmount);
         setSelectedBet(null);
       }
     } catch (error) {
+      if (integerBalance === 0) {
+        toast.error("Unsufficient Balance");
+      } else {
+        toast.error("Failed to place bet");
+      }
       console.error("Error placing bet:", error);
-      alert("Failed to place bet");
     }
   };
 
   return (
     <div className="max-w-md mx-auto bg-[#010125] shadow-xl shadow-red-950 min-h-screen relative">
-
-        <Timer  timeLeft={timeLeft}/>
+      <Timer timeLeft={timeLeft} />
       <GameHeader
         period={currentRound?.period || "---"}
         timeLeft={timeLeft}
@@ -232,7 +239,7 @@ const GameBoard = () => {
       )} */}
 
       <WinDialog
-        open={winingLoad}                  // 👉 sirf true pe show
+        open={winingLoad} // 👉 sirf true pe show
         amount={savedResult?.winningAmount || betAmount}
         onClose={() => setWiningLoad(false)} // Close button par false set
       />

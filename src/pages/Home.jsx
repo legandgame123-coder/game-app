@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import BottomBar from "../components/BottomBar";
 import TelegramMenu from "../components/TelegramMenu";
 import AboutDialog from "./notificationDiloag";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const [games, setGames] = useState([]);
@@ -73,6 +74,7 @@ const Home = () => {
                 // className="bg-blue-500  hover:bg-blue-600"
               />
             </Link>
+
             <Button
               className="bg-gradient-to-b lg:w-[70%] h-12 w-full from-[#9C1137] via-[#9C1137]  to-black"
               children="Download Our App"
@@ -80,6 +82,7 @@ const Home = () => {
           </div>
           <Slider />
         </div>
+
         <div className="my-8 flex flex-col flex-wrap md:flex-row gap-y-12 md:px-20 px-6 justify-around">
           {games.map((gameKey) => {
             const info = gameInfo[gameKey];

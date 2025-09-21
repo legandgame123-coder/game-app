@@ -7,6 +7,7 @@ import Header from "./Header";
 import { useDeviceType } from "../../hooks/deviceType";
 
 import { useBalance } from "../../context/BalanceContext";
+import { toast } from "react-toastify";
 
 export default function AviatorGameScreen() {
   const {
@@ -23,24 +24,25 @@ export default function AviatorGameScreen() {
   } = useAviatorSocket();
 
   const device = useDeviceType();
-
+  const { balance, setBalance, loadBalance } = useBalance();
+  const integerBalance = Math.floor(parseInt(balance, 10));
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?._id;
   const crashPoints = gameHistory ? gameHistory.slice(1) : [];
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [nextRoundTimer, setNextRoundTimer] = useState(0);
-    const [showWinPopup, setShowWinPopup] = useState(false);
+  const [showWinPopup, setShowWinPopup] = useState(false);
   useEffect(() => {
-    // const audio = new Audio("/main.mp3");
-    // audio.loop = true;
-    // audio.play().catch((err) => {
-    //   console.error("Autoplay failed:", err);
-    // });
-    // return () => {
-    //   audio.pause();
-    //   audio.currentTime = 0;
-    // };
+    const audio = new Audio("/main.mp3");
+    audio.loop = true;
+    audio.play().catch((err) => {
+      console.error("Autoplay failed:", err);
+    });
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
   }, []);
 
   const toggleHistory = () => setIsExpanded((prev) => !prev);
@@ -56,7 +58,6 @@ export default function AviatorGameScreen() {
   const [activeTab, setActiveTab] = useState("bets");
   const [userBets, setUserBets] = useState([]);
   const [allBets, setAllBets] = useState([]);
-  const { balance, setBalance, loadBalance } = useBalance();
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const startTsRef = useRef(null);
@@ -343,13 +344,18 @@ export default function AviatorGameScreen() {
       setBalance((prev) => prev - bet);
       setHasCashedOut(false);
     } catch (error) {
+      if (integerBalance === 0) {
+        toast.error("Unsufficient Balance");
+      } else {
+        toast.error("Failed to place bet");
+      }
       console.error("Error placing bet:", error.message);
     }
   };
   const closePopup = () => {
     setShowWinPopup(false);
-
   };
+
   const handleCashOut = async () => {
     if (!isConnected || !hasBet || hasCashedOut || !userId) return;
     try {
@@ -366,7 +372,6 @@ export default function AviatorGameScreen() {
       const audio1 = new Audio("/win.wav");
       audio1.play().catch(() => {});
       setHasCashedOut(true);
-      
     } catch (error) {
       console.error("Error during cash out:", error.message);
     }

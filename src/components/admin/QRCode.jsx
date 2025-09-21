@@ -1,5 +1,6 @@
 import { UploadCloudIcon, FileIcon, XIcon, Trash2Icon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const QRCode = () => {
   const [qrImage, setQrImage] = useState(null);
@@ -73,11 +74,11 @@ const QRCode = () => {
 
       console.log(res);
       if (res.status === 200) {
-        alert("🗑️ Deleted successfully");
+        toast.success("🗑️ Deleted successfully");
       }
       fetchQrCodes();
     } catch (err) {
-      alert("❌ Failed to delete");
+      toast.error("❌ Failed to delete");
     }
   };
 
@@ -86,7 +87,7 @@ const QRCode = () => {
     e.preventDefault();
 
     if (!qrImage) {
-      alert("Please select a QR Code image");
+      toast("Please select a QR Code image");
       return;
     }
 
@@ -111,11 +112,11 @@ const QRCode = () => {
         throw new Error(data.message || "Upload failed");
       }
 
-      alert("✅ QR Code uploaded successfully!");
+      toast.success("✅ QR Code uploaded successfully!");
       handleRemoveImage();
       fetchQrCodes(); // reload list
     } catch (error) {
-      alert("❌ Error: " + error.message);
+      toast.error("❌ Error: " + error.message);
     } finally {
       setLoading(false);
     }

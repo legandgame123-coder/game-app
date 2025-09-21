@@ -27,6 +27,7 @@ import RankingPage from "./components/RankingPage";
 import QRCode from "./components/admin/QRCode";
 import { ReferEarn } from "./components/ReferEarn";
 import ProfilePage from "./components/withdrawal/ProfilePage";
+import { ToastContainer, toast } from "react-toastify";
 
 const App = () => {
   useEffect(() => {
@@ -106,6 +107,7 @@ const App = () => {
                 />
                 <Route path="*" element={<div>404 - Not Found</div>} />
               </Routes>
+              <ToastContainer />
             </AviatorSocketProvider>
           </SocketProvider>
         </BrowserRouter>

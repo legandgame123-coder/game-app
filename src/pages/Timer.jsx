@@ -23,11 +23,11 @@ export default function Timer({ timeLeft }) {
   }, [timeLeft]);
 
   // hide once countdown hits 0
-  if (timeLeft ===  0 || timeLeft > 5) return null;
+  if (timeLeft === 0 || timeLeft > 5) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
-      <div className="flex space-x-2">
+    <div className="absolute inset-0 min-h-screen  flex items-center justify-center bg-black/70 z-50">
+      <div className=" flex space-x-2">
         {String(timeLeft)
           .padStart(2, "0")
           .split("")

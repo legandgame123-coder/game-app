@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const ReferEarn = ({ isOpen, onClose }) => {
   const [referralLink, setReferralLink] = useState("");
@@ -60,7 +61,7 @@ export const ReferEarn = ({ isOpen, onClose }) => {
           <button
             onClick={() => {
               navigator.clipboard.writeText(referralLink);
-              alert("Copied to clipboard!");
+              toast("Copied to clipboard!");
             }}
             disabled={!referralLink}
             className="ml-3 px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white font-medium hover:from-green-600 hover:to-green-700 disabled:opacity-50"

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import axiosInstance from "../../utils/axiosInstance";
 
 const GameRoundsTable = () => {
   const [rounds, setRounds] = useState([]);
@@ -14,13 +16,15 @@ const GameRoundsTable = () => {
 
   const [formData, setFormData] = useState({
     gameType: "chicken",
+    period: "",
     multipliers: "1.02,1.1,1.25,1.5,2,0",
     startTime: "",
     endTime: "",
     channelId: newChannel,
   });
+  console.log("forom Data", formData);
 
-  console.log("id:", newChannel);
+  console.log(" ===== id: ", newChannel);
 
   console.log(formData);
 
@@ -39,7 +43,7 @@ const GameRoundsTable = () => {
       setRounds(res.data.data || []);
     } catch (err) {
       console.error("Error fetching rounds:", err);
-      alert("❌ Failed to fetch game rounds");
+      toast.error("❌ Failed to fetch game rounds");
     }
   };
 
@@ -92,10 +96,10 @@ const GameRoundsTable = () => {
       );
       setEditIndex(null);
       fetchRounds();
-      alert("✅ Round updated successfully");
+      toast.success("✅ Round updated successfully");
     } catch (err) {
       console.error("Error saving round:", err);
-      alert("❌ Failed to update round");
+      toast.error("❌ Failed to update round");
     }
   };
 
@@ -106,10 +110,10 @@ const GameRoundsTable = () => {
         `${import.meta.env.VITE_API_URL}/api/v1/telegram/delete-round/${id}`
       );
       fetchRounds();
-      alert("🗑️ Round deleted successfully");
+      toast.success("🗑️ Round deleted successfully");
     } catch (err) {
       console.error("Error deleting round:", err);
-      alert("❌ Failed to delete round");
+      toast.error("❌ Failed to delete round");
     }
   };
 
@@ -117,22 +121,26 @@ const GameRoundsTable = () => {
     e.preventDefault();
     const payload = {
       ...formData,
+      period: formData.gameType === "color" ? newPeriod : "-",
       channelId: newChannel,
       multipliers: formData.multipliers.split(",").map(Number),
     };
 
-    console.log(payload);
+    console.log("payload", payload);
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/v1/telegram/round`,
         payload
       );
+      setNewPeriod("");
+      setChannels("");
       console.log(res.data);
       setShowModal(false);
       fetchRounds();
-
       setFormData({
         gameType: "chicken",
+        period: "",
         multipliers: "",
         startTime: "",
         endTime: "",
@@ -142,6 +150,22 @@ const GameRoundsTable = () => {
       console.log("Failed to add game round", err);
     }
   };
+
+  const [periodsList, setPeriodslist] = useState([]);
+  const [newPeriod, setNewPeriod] = useState([]);
+
+  const fetchClorPeriod = async () => {
+    try {
+      const res = await axiosInstance.get("/api/v1/color/next-periods");
+      setPeriodslist(res?.data?.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchClorPeriod();
+  }, []);
 
   return (
     <div className=" md:p-6 text-white">
@@ -167,6 +191,7 @@ const GameRoundsTable = () => {
               <th className="p-2">Multipliers</th>
               <th className="p-2">Start Time</th>
               <th className="p-2">End Time</th>
+              <th className="p-2">Period</th>
               <th className="p-2">Status</th>
               <th className="p-2 text-center">Actions</th>
             </tr>
@@ -252,6 +277,26 @@ const GameRoundsTable = () => {
                     new Date(round.endTime).toLocaleString()
                   )}
                 </td>
+
+                <td className="p-2">
+                  {editIndex === index ? (
+                    <select
+                      value={editedRound.period}
+                      onChange={(e) =>
+                        handleInputChange("period", e.target.value)
+                      }
+                      className="bg-gray-900 p-1 rounded w-full"
+                    >
+                      {periodsList.map((per) => (
+                        <option key={per.id} value={per.id}>
+                          {per?.period?.slice(-6) || "---"}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    round.period
+                  )}
+                </td>
                 <td className="p-2">{round.status}</td>
                 <td className="p-2 text-center">
                   {editIndex === index ? (
@@ -323,6 +368,51 @@ const GameRoundsTable = () => {
                 </option>
               ))}
             </select>
+
+            {formData.gameType === "color" ? (
+              periodsList.length > 0 ? (
+                <div className="mb-6">
+                  <label
+                    htmlFor="channelSelect"
+                    className="block mb-2 font-medium"
+                  >
+                    Select a Period:
+                  </label>
+                  <select
+                    required
+                    id="channelSelect"
+                    className=" w-full p-2 bg-gray-700 rounded text-white "
+                    value={newPeriod}
+                    onChange={(e) => setNewPeriod(e.target.value)}
+                  >
+                    <option value="">-- Select a period --</option>
+                    {periodsList.map((per) => (
+                      <option key={per.id} value={per.id}>
+                        {per?.period?.slice(-6) || "---"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <p>No channels found.</p>
+              )
+            ) : (
+              // <div>
+              //   <label htmlFor="multipliers" className="block mb-2 font-medium">
+              //     Period
+              //   </label>
+              //   <input
+              //     type="text"
+              //     name="period"
+              //     value={formData.period}
+              //     onChange={handleChange}
+              //     className="w-full p-2 bg-gray-700 rounded text-white"
+              //     placeholder="Period"
+              //     required
+              //   />
+              // </div>
+              ""
+            )}
 
             <label htmlFor="multipliers" className="block mb-2 font-medium">
               Multipliers (comma separated):

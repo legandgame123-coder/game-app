@@ -1,24 +1,29 @@
-import axios from "axios";
-import { ListCollapse } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import { ListCollapse } from "lucide-react";
 import TelegramApproval from "./TelegramAproval";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Deposite = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterMethod, setFilterMethod] = useState("telegram"); // Filter state for 'upi' or 'crypto'
+  const [channels, setChannels] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isTelegramAOpen, setIsTelegramAOpen] = useState(false);
-  // Fetch transaction history from API
+  const [filterMethod, setFilterMethod] = useState("telegram");
+
+  // Fetch deposit transactions
   const fetchTransactionHistory = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/v1/wallet/history/deposit`
       );
-      const data = await response.json();
-      setTransactions(data.data.deposit); // Adjust according to the response structure
+      const data = await res.json();
+      setTransactions(data?.data?.deposit || []);
     } catch (error) {
       console.error("Error fetching transaction history:", error);
+      toast.error("Failed to fetch transactions.");
     } finally {
       setLoading(false);
     }
@@ -28,169 +33,166 @@ const Deposite = () => {
     fetchTransactionHistory();
   }, []);
 
-  if (loading) return <div className="text-center text-xl">Loading...</div>;
-
-  const updateWithdrawalStatus = async (
-    transactionId,
-    status,
-    userId,
-    amount
-  ) => {
-    try {
-      const response = await axios.put(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/wallet/telegram/update-deposite-transaction-status`,
-        {
-          status,
-          id: transactionId,
-          userId,
-          amount,
-        }
-      );
-
-      if (response.status === 200) {
-        setTransactions((prevTransactions) =>
-          prevTransactions.map((transaction) =>
-            transaction._id === transactionId
-              ? { ...transaction, status }
-              : transaction
-          )
-        );
-      } else {
-        console.error("Failed to update status.");
-      }
-    } catch (error) {
-      console.error("Error updating status:", error);
-    }
-  };
-
   const toggleDetails = (index) => {
-    setTransactions((prevTransactions) =>
-      prevTransactions.map((transaction, i) =>
-        i === index
-          ? { ...transaction, showDetails: !transaction.showDetails }
-          : transaction
+    setTransactions((prev) =>
+      prev.map((t, i) =>
+        i === index ? { ...t, showDetails: !t.showDetails } : t
       )
     );
   };
 
-  // Filter transactions by selected method if any
+  const fetchChannels = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/my-channels`
+      );
+      setChannels(res?.data?.channels || []);
+      return true;
+    } catch (err) {
+      console.error("Fetch channels error:", err);
+      toast.error("Failed to fetch Telegram channels.");
+      return false;
+    }
+  };
+
+  const handleApproveClick = async (transaction) => {
+    const fetched = await fetchChannels();
+    if (!fetched) return;
+
+    setSelectedTransaction(transaction);
+    setIsTelegramAOpen(true);
+  };
+
   const filteredTransactions = filterMethod
     ? transactions.filter(
-        (transaction) =>
-          transaction.method.toLowerCase() === filterMethod.toLowerCase()
+        (t) => t?.method?.toLowerCase() === filterMethod?.toLowerCase()
       )
     : transactions;
 
-  // Handler for toggling filter buttons
   const handleFilterClick = (method) => {
-    setFilterMethod((prev) => (prev === method ? "" : method)); // toggle filter on/off
+    setFilterMethod((prev) => (prev === method ? "" : method));
   };
 
+  console.log("filteredTransactions", filteredTransactions.slice(0, 5));
+
   return (
-    <div className="md:min-w-l w-auto mx-auto px-4 py-10">
+    <div className="md:min-w-lg w-full max-w-5xl mx-auto px-4 py-10">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-200">
         Telegram Subscriptions
       </h2>
 
+      {/* Optional Filter Buttons */}
+      <div className="flex justify-center gap-4 mb-6">
+        <button
+          onClick={() => handleFilterClick("telegram")}
+          className={`px-4 py-2 rounded-md ${
+            filterMethod === "telegram"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-800"
+          }`}
+        >
+          Telegram
+        </button>
+        <button
+          onClick={() => handleFilterClick("crypto")}
+          className={`px-4 py-2 rounded-md ${
+            filterMethod === "crypto"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-800"
+          }`}
+        >
+          Crypto
+        </button>
+      </div>
+
       <div className="space-y-4">
-        {filteredTransactions.length === 0 ? (
+        {loading ? (
+          <div className="text-center text-xl text-gray-300">Loading...</div>
+        ) : filteredTransactions.length === 0 ? (
           <div className="text-center text-gray-400 py-10">
             No transactions found.
           </div>
         ) : (
+          // slice(0, 5)
           filteredTransactions.map((transaction, index) => (
             <div
               key={transaction._id}
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <div className="p-4 border-b">
-                <div className="flex md:flex-row flex-col justify-between gap-4 items-center">
-                  <div className="flex justify-between items-center gap-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                     <span className="font-semibold text-lg">
                       Amount: {transaction.amount}
                     </span>
                     <span className="text-gray-500">
-                      {transaction.details.gameName}
+                      {transaction.details?.gameName}
                     </span>
-                    <p>{transaction.status}</p>
-                  </div>
-                  <div className="flex gap-4 justify-between items-center text-center flex-row-reverse">
-                    <button
-                      onClick={() => toggleDetails(index)}
-                      className="text-blue-500 hover:underline"
+                    <span
+                      className={`text-sm font-medium px-2 py-1 rounded ${
+                        transaction.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : transaction.status === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
                     >
-                      <ListCollapse />
-                    </button>
+                      {transaction.status}
+                    </span>
+                  </div>
 
-                    {/* Approve and Reject buttons */}
+                  <div className="flex items-center gap-4">
                     {transaction.status === "pending" && (
-                      <div className="flex mt-2 space-x-4">
-                        <TelegramApproval
-                          transaction={transaction}
-                          isOpen={isTelegramAOpen}
-                          onClose={() => setIsTelegramAOpen(false)}
-                        />
-
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setIsTelegramAOpen(true);
-                          }}
-                          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                        >
-                          {/* <button
-                         
-                          onClick={() =>
-                            updateWithdrawalStatus(
-                              transaction._id,
-                              "approved",
-                              transaction.userId,
-                              transaction.amount
-                            )
-                          }
-                          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                        >  */}
-                          Approve
-                        </button>
-                        {/* <button
-                          onClick={() =>
-                            updateWithdrawalStatus(
-                              transaction._id,
-                              "rejected",
-                              transaction.userId,
-                              transaction.amount
-                            )
-                          }
-                          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                        >
-                          Reject
-                        </button> */}
-                      </div>
+                      <button
+                        onClick={() => handleApproveClick(transaction)}
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                      >
+                        Approve
+                      </button>
                     )}
+                    <button
+                      onClick={() => {
+                        toggleDetails(index), console.log(index);
+                      }}
+                      className="text-blue-500 hover:underline cursor-pointer"
+                      aria-label="Toggle details"
+                    >
+                      <ListCollapse className="hover:scale-[90%] " />
+                    </button>
                   </div>
                 </div>
               </div>
+
               {transaction.showDetails && (
-                <div className="p-4 bg-gray-50">
-                  <div className="mt-4">
-                    <h4 className="font-semibold mb-2">Details</h4>
-                    <ul className="list-disc pl-6 space-y-2">
-                      {Object.entries(transaction.details).map(
-                        ([key, value]) => (
-                          <li key={key}>
-                            <strong className="capitalize">{key}:</strong>{" "}
-                            {value}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
+                <div className="p-4 bg-gray-50 text-sm">
+                  <h4 className="font-semibold mb-2">Details</h4>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {Object.entries(transaction.details || {}).map(
+                      ([key, value]) => (
+                        <li key={key}>
+                          <strong className="capitalize">{key}:</strong> {value}
+                        </li>
+                      )
+                    )}
+                  </ul>
                 </div>
               )}
             </div>
           ))
+        )}
+
+        {/* Telegram Approval Modal */}
+        {selectedTransaction && (
+          <TelegramApproval
+            fetchTransactionHistory={fetchTransactionHistory}
+            channels={channels}
+            transaction={selectedTransaction}
+            isOpen={isTelegramAOpen}
+            onClose={() => {
+              setIsTelegramAOpen(false);
+              setSelectedTransaction(null);
+            }}
+          />
         )}
       </div>
     </div>
@@ -198,3 +200,45 @@ const Deposite = () => {
 };
 
 export default Deposite;
+
+// {
+//   transaction.status === "pending" && (
+//     <div className="flex mt-2 space-x-4">
+//       <button
+//         onClick={(e) => {
+//           e.preventDefault();
+//           fetchChannels();
+//           setIsTelegramAOpen(true);
+//         }}
+//         className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+//       >
+//         <button
+
+//                           onClick={() =>
+//                             updateWithdrawalStatus(
+//                               transaction._id,
+//                               "approved",
+//                               transaction.userId,
+//                               transaction.amount
+//                             )
+//                           }
+//                           className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+//                         >
+//         Approve
+//       </button>
+//       <button
+//                           onClick={() =>
+//                             updateWithdrawalStatus(
+//                               transaction._id,
+//                               "rejected",
+//                               transaction.userId,
+//                               transaction.amount
+//                             )
+//                           }
+//                           className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+//                         >
+//                           Reject
+//                         </button>
+//     </div>
+//   );
+// }

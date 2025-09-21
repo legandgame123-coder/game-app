@@ -1,100 +1,80 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
-const API = `${import.meta.env.VITE_API_URL}/my-channels`;
-
-const TelegramApproval = ({ isOpen, onClose, transaction }) => {
-  const [channels, setChannels] = useState([]);
-  const [loading, setLoading] = useState(false);
+const TelegramApproval = ({
+  isOpen,
+  onClose,
+  transaction,
+  channels,
+  fetchTransactionHistory,
+}) => {
   const [newChannel, setNewChannel] = useState("");
-  const [fetchedOnce, setFetchedOnce] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // ---- Fetch available Telegram channels ----
-  const fetchChannels = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(API);
-      console.log("Full response:", res.data);
-
-      // handle both { channels:[...] } or { data:{ channels:[...] } }
-      const list =
-        res.data.channels ||
-        (res.data.data && res.data.data.channels) ||
-        [];
-      setChannels(list);
-      setFetchedOnce(true);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      alert("Failed to fetch channels. Check console for details.");
-    } finally {
-      // always turn loader off
-      setLoading(false);
-    }
-  };
-
-  // Fetch only when the modal opens, and only once per page load
-  useEffect(() => {
-    if (isOpen && !fetchedOnce) {
-      fetchChannels();
-    }
-  }, [isOpen, fetchedOnce]);
-
-  // ---- Update transaction status ----
   const updateWithdrawalStatus = async (status) => {
     if (!transaction?._id) {
-      alert("Transaction data missing.");
+      toast.error("Transaction data missing.");
       return;
     }
+
     if (!newChannel) {
-      alert("Please select a channel before continuing.");
+      toast.error("Please select a channel before continuing.");
       return;
     }
 
     const channelId = parseInt(newChannel, 10);
     if (isNaN(channelId)) {
-      alert("Invalid channel ID.");
+      toast.error("Invalid channel ID.");
       return;
     }
 
     try {
-      console.log("Using API URL:", import.meta.env.VITE_API_URL);
+      setLoading(true);
+
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/v1/wallet/telegram/update-deposite-transaction-status`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/v1/wallet/telegram/update-deposite-transaction-status`,
         {
-          status,
+          status: status,
           id: transaction._id,
-          userId: transaction.userId,
-          amount: transaction.amount,
-          channelId,
+          userId: transaction?.userId,
+          amount: transaction?.amount,
+          channelId: channelId,
         }
       );
-
-      console.log("Update response:", response.data);
-      alert(response.data.message || "Status updated successfully.");
-      onClose(); // close the dialog after successful update
+      await fetchTransactionHistory();
+      console.log(response);
+      console.log("first ========");
+      toast.success(response.data.message || "Status updated successfully.");
+      onClose();
     } catch (error) {
       console.error("Error updating status:", error);
-      alert(error.response?.data?.message || error.message || "Update failed.");
+      toast.error(
+        error.response?.data?.message || error.message || "Update failed."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Prevent modal from rendering when closed
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-[rgba(0,0,0,0.1)] flex justify-center items-center z-50">
       <div className="bg-white text-black rounded p-6 w-full max-w-xl shadow-lg relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl font-bold"
+          className="absolute top-2 right-3.5 cursor-pointer text-red-500 hover:text-red-700 text-xl font-bold"
         >
           ×
         </button>
 
         <h1 className="text-2xl font-bold mb-4">Telegram Channels</h1>
 
-        {loading && <p className="mb-4">Loading channels…</p>}
-
-        {!loading && channels.length > 0 ? (
+        {channels && channels.length > 0 ? (
           <div className="mb-6">
             <label htmlFor="channelSelect" className="block mb-2 font-medium">
               Select a Channel:
@@ -114,21 +94,31 @@ const TelegramApproval = ({ isOpen, onClose, transaction }) => {
             </select>
           </div>
         ) : (
-          !loading && <p>No channels found.</p>
+          <p>No channels found.</p>
         )}
 
         <div className="flex mt-2 space-x-4">
           <button
             onClick={() => updateWithdrawalStatus("approved")}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            disabled={!newChannel || loading}
+            className={`px-4 py-2 rounded-md text-white ${
+              !newChannel || loading
+                ? "bg-green-300 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
           >
-            Approve
+            {loading ? "Approving..." : "Approve"}
           </button>
           <button
             onClick={() => updateWithdrawalStatus("rejected")}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+            disabled={!newChannel || loading}
+            className={`px-4 py-2 rounded-md text-white ${
+              !newChannel || loading
+                ? "bg-red-300 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600"
+            }`}
           >
-            Reject
+            {loading ? "Rejecting..." : "Reject"}
           </button>
         </div>
       </div>

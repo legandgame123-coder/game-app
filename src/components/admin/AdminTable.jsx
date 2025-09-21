@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ACCESS_OPTIONS = [
   "transaction",
@@ -46,10 +47,10 @@ const AdminTable = () => {
       );
       setEditIndex(null);
       fetchAdmins();
-      alert("✅ Admin updated successfully.");
+      toast.success("✅ Admin updated successfully.");
     } catch (error) {
       console.error("Update failed:", error);
-      alert("❌ Failed to update admin.");
+      toast.error("❌ Failed to update admin.");
     }
   };
 
@@ -68,10 +69,10 @@ const AdminTable = () => {
         }
       );
       fetchAdmins();
-      alert("🗑️ Admin deleted.");
+      toast.success("🗑️ Admin deleted.");
     } catch (error) {
       console.error("Delete failed:", error);
-      alert("❌ Failed to delete admin.");
+      toast.error("❌ Failed to delete admin.");
     }
   };
 
